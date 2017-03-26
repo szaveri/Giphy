@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Giphy.Recent"
+    x:Class="Giphy.SearchPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Giphy"
@@ -11,21 +11,25 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
         <Grid Name="HeaderGrid" Grid.Row="0">
-            <TextBlock Name="RecentTitle" Text="Recent" />
+            <AutoSuggestBox Name="SearchGif" 
+                            PlaceholderText="Search GIFs"
+                            QueryIcon="Find"
+                            HorizontalAlignment="Stretch"
+                            QuerySubmitted="GifSearch"/>
         </Grid>
         <!-- Content -->
         <Grid Name="ContentGrid" Grid.Row="1" Padding="0,10">
             <ProgressBar Name="ProgressBar"
                          IsIndeterminate="True"
                          Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                         Visibility="Visible"
+                         Visibility="Collapsed"
                          Width="200" />
-            <ScrollViewer Name="sv"
+            <ScrollViewer Name="sv" 
+                          ViewChanged="OnScrollViewerViewChanged"
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto">
                 <Grid HorizontalAlignment="Center">
@@ -38,14 +42,6 @@
                     <StackPanel Name="ColumnTwo" Orientation="Vertical" Grid.Column="1" />
                 </Grid>
             </ScrollViewer>
-        </Grid>
-        <!-- Footer -->
-        <Grid Name="FooterGrid" Grid.Row="2">
-            <TextBlock x:Name="poweredBy" Text="Powered by Giphy" 
-                   VerticalAlignment="Bottom" HorizontalAlignment="Right" 
-                   TextWrapping="NoWrap" 
-                   Width="125" Height="20" 
-                   Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
         </Grid>
     </Grid>
 </Page>

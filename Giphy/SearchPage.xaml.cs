@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -13,60 +12,45 @@ namespace Giphy
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Trending : Page
+    public sealed partial class SearchPage : Page
     {
-
+        private static int total = int.MaxValue;
         private static int offset = 0;
-        private static List<Datum> TrendingList = new List<Datum>();
+        private static string searchValue = "";
 
-        public Trending()
+        public SearchPage()
         {
             this.InitializeComponent();
             GiphyImage.RegisterForShare();
         }
 
         /*
-         * Gets new set of Trending GIFs if not previously queried on page load
-         */
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        *  Event triggered to search for GIFs based on search box
+        */
+        private void GifSearch(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs arg)
         {
-            //Only load a default view of trending images if page contains no content
-            if (offset == 0)
-                GetTrending();
-            else
-            {
-                this.ColumnOne.Children.Clear();
-                this.ColumnTwo.Children.Clear();
-                DrawList(TrendingList);
-            }
-                
+            offset = 0;
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+            searchValue = arg.QueryText;
+            GetGifs();
         }
 
         /*
-         *  Search for latest trending GIFs
-         *  Store GIFs in global variable to prevent unnecessary query on search clear
+         * Loads GIFs based on search text
          */
-        private async void GetTrending()
-        {
-            ProgressBar.Visibility = Visibility.Visible;
-            Uri uri = HttpRequest.GenerateURL("trending", offset, null);
-            var response = await HttpRequest.GetQuery(uri);
-            var list = response.data;
-            TrendingList.AddRange(list);
-            offset += response.pagination.count;
-
-            DrawList(list);
-            
-            ProgressBar.Visibility = Visibility.Collapsed;
-        }
-
-        /*
-         * Draws list of trending GIFs
-         */
-        private void DrawList(List<Datum> list)
+        private async void GetGifs()
         {
             this.ProgressBar.Visibility = Visibility.Visible;
 
+            Uri uri = HttpRequest.GenerateURL("search", offset, Uri.EscapeDataString(searchValue));
+            var response = await HttpRequest.GetQuery(uri);
+            var list = response.data;
+
+            total = response.pagination.total_count;
+            offset += response.pagination.count;
+
+            //Draws list on scroll view
             for (int i = 0; i < list.Count; i++)
             {
                 Image img = new Image();
@@ -83,6 +67,7 @@ namespace Giphy
                 else
                     this.ColumnTwo.Children.Add(img);
             }
+
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
@@ -91,6 +76,9 @@ namespace Giphy
          */
         private void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (offset >= total)
+                return;
+
             var verticalOffset = sv.VerticalOffset;
             var maxVerticalOffset = sv.ScrollableHeight; //sv.ExtentHeight - sv.ViewportHeight;
 
@@ -98,7 +86,7 @@ namespace Giphy
                 verticalOffset == maxVerticalOffset)
             {
                 // Scrolled to bottom
-                GetTrending();
+                GetGifs();
             }
         }
     }

@@ -56,7 +56,7 @@ namespace Giphy
                 }
                 else
                 {
-                    ContentFrame.Navigate(typeof(Search));
+                    ContentFrame.Navigate(typeof(SearchPage));
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Giphy
         {
             if (command.Label == "Continue")
             {
-                ContentFrame.Navigate(typeof(Search));
+                ContentFrame.Navigate(typeof(SearchPage));
                 return;
             }
             if (command.Label == "Try Again")
@@ -80,35 +80,19 @@ namespace Giphy
         {
             if (SearchGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(Search));
+                ContentFrame.Navigate(typeof(SearchPage));
             }
             else if (TrendingGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(Trending));
+                ContentFrame.Navigate(typeof(TrendingPage));
             }
             else if (FavoriteGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(Favorites));
+                ContentFrame.Navigate(typeof(FavoritesPage));
             }
             else if (RecentGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(Recent));
-            }
-        }
-
-        private void PageSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            double width = ((Frame)Window.Current.Content).ActualWidth;
-            
-            if(width > 1007)
-            {
-                NavigationPane.IsPaneOpen = true;
-                NavigationPane.DisplayMode = SplitViewDisplayMode.Inline;
-            }
-            else
-            {
-                NavigationPane.IsPaneOpen = false;
-                NavigationPane.DisplayMode = SplitViewDisplayMode.CompactOverlay;
+                ContentFrame.Navigate(typeof(RecentPage));
             }
         }
     }

@@ -20,9 +20,9 @@ namespace Giphy
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Recent : Page
+    public sealed partial class RecentPage : Page
     {
-        public Recent()
+        public RecentPage()
         {
             this.InitializeComponent();
         }
