@@ -59,8 +59,8 @@ namespace Giphy
                 img.Margin = new Thickness(0, 0, 10, 10);
                 img.Stretch = Stretch.UniformToFill;
                 img.MaxWidth = 400;
-                img.Tapped += (sender, e) => { GiphyImage.ShowContextManu(sender, e, img); };
-                img.RightTapped += (sender, e) => { GiphyImage.ShowContextManu(sender, e, img); };
+                img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
+                img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
 
                 if (i % 2 == 0)
                     this.ColumnOne.Children.Add(img);

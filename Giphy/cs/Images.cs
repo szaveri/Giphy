@@ -9,37 +9,17 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
-using SQLitePCL;
+using Giphy.Database;
+using SQLite;
 
 namespace Giphy
 {
     public class GiphyImage
     {
-        public string type { get; }
-        public string id { get; }
-        public string rating { get; }
-        public string url { get; }
-
-        public GiphyImage()
-        {
-            this.type = null;
-            this.id = null;
-            this.rating = null;
-            this.url = null;
-        }
-
-        public GiphyImage(string type, string id, string rating, string url)
-        {
-            this.type = type;
-            this.id = id;
-            this.rating = rating;
-            this.url = url;
-        }
-
         /*
         * Opens context menu on tap or right click (hold)
         */
-        public static void ShowContextManu(object sender, TappedRoutedEventArgs e, Image img)
+        public static void ShowContextMenu(object sender, TappedRoutedEventArgs e, Image img)
         {
             e.Handled = true;
             var flyout = GiphyImage.GenerateFlyout(img);
@@ -47,7 +27,7 @@ namespace Giphy
             flyout.ShowAt(senderElement);
         }
 
-        public static void ShowContextManu(object sender, RightTappedRoutedEventArgs e, Image img)
+        public static void ShowContextMenu(object sender, RightTappedRoutedEventArgs e, Image img)
         {
             e.Handled = true;
             var flyout = GiphyImage.GenerateFlyout(img);
@@ -68,10 +48,35 @@ namespace Giphy
             share.Tapped += (sender, e) => { ShareImage(sender, e, img); };
             copyUrl.Tapped += (sender, e) => { CopyImageUrl(sender, e, img); };
 
+            flyout.Items.Add(new MenuFlyoutSeparator());
+
             /*
              * Check if image is already favorited, if so "Unfavorite", else favorite
              */
-             //Coding here
+            try
+            {
+                using (var conn = new SQLiteConnection(Global.databaseFile))
+                {
+                    var item = GiphyDatabase.GetFavorite(conn, img.Name);
+                    if (item != null)
+                    {
+                        MenuFlyoutItem unfavorite = new MenuFlyoutItem { Text = "Remove from Favorites" };
+                        flyout.Items.Add(unfavorite);
+                        unfavorite.Tapped += (sender, e) => { UnfavoriteImage(sender, e, item); };
+                    }
+                    else
+                    {
+                        MenuFlyoutItem favorite = new MenuFlyoutItem { Text = "Add to Favorites" };
+                        flyout.Items.Add(favorite);
+                        favorite.Tapped += (sender, e) => { FavoriteImage(sender, e, img); };
+                    }
+                }
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+
 
             return flyout;
         }
@@ -106,6 +111,12 @@ namespace Giphy
 
             Global.shareFileName = fileName;
             DataTransferManager.ShowShareUI();
+
+            //Add to Recents database
+            var data = new Giphy.Database.Recents();
+            data.Giphy_Id = img.Name;
+            data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            GiphyDatabase.InsertUpdateRecent(data);
         }
 
         /*
@@ -141,6 +152,31 @@ namespace Giphy
             dataPackage.SetText(url);
             Clipboard.SetContent(dataPackage);
             Clipboard.Flush();
+
+            //Add to Recents database
+            var data = new Giphy.Database.Recents();
+            data.Giphy_Id = img.Name;
+            data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            GiphyDatabase.InsertUpdateRecent(data);
+        }
+
+        /*
+         *  Event handler to add image to favorites
+         */
+        private static void FavoriteImage(object sender, RoutedEventArgs e, Image img)
+        {
+            var data = new Giphy.Database.Favorites();
+            data.Giphy_Id = img.Name;
+            data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            GiphyDatabase.InsertUpdateFavorite(data);
+        }
+
+        /*
+         * Event handler to remove image from favorites`
+         */
+        private static void UnfavoriteImage(object sender, RoutedEventArgs e, Giphy.Database.Favorites favorite)
+        {
+            GiphyDatabase.DeleteFavorite(favorite);
         }
     }
 }

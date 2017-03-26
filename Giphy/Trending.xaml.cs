@@ -17,7 +17,7 @@ namespace Giphy
     {
 
         private static int offset = 0;
-        private static List<Datum> trendingList = new List<Datum>();
+        private static List<Datum> TrendingList = new List<Datum>();
 
         public Trending()
         {
@@ -37,7 +37,7 @@ namespace Giphy
             {
                 this.ColumnOne.Children.Clear();
                 this.ColumnTwo.Children.Clear();
-                DrawList(trendingList);
+                DrawList(TrendingList);
             }
                 
         }
@@ -52,7 +52,7 @@ namespace Giphy
             Uri uri = HttpRequest.GenerateURL("trending", offset, null);
             var response = await HttpRequest.GetQuery(uri);
             var list = response.data;
-            trendingList.AddRange(list);
+            TrendingList.AddRange(list);
             offset += response.pagination.count;
 
             DrawList(list);
@@ -63,20 +63,20 @@ namespace Giphy
         /*
          * Draws list of trending GIFs
          */
-        private void DrawList(List<Datum> trendingList)
+        private void DrawList(List<Datum> list)
         {
             this.ProgressBar.Visibility = Visibility.Visible;
 
-            for (int i = 0; i < trendingList.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 Image img = new Image();
-                img.Name = trendingList[i].id;
-                img.Source = new BitmapImage(new Uri(trendingList[i].images.fixed_width.url, UriKind.Absolute));
+                img.Name = list[i].id;
+                img.Source = new BitmapImage(new Uri(list[i].images.fixed_width.url, UriKind.Absolute));
                 img.Margin = new Thickness(0, 0, 10, 10);
                 img.Stretch = Stretch.UniformToFill;
                 img.MaxWidth = 400;
-                img.Tapped += (sender, e) => { GiphyImage.ShowContextManu(sender, e, img); };
-                img.RightTapped += (sender, e) => { GiphyImage.ShowContextManu(sender, e, img); };
+                img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
+                img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
 
                 if (i % 2 == 0)
                     this.ColumnOne.Children.Add(img);
