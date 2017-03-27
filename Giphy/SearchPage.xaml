@@ -8,6 +8,31 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomAppBar.Visibility" Value="Visible"></Setter>
+                        <Setter Target="PreviousButton.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="NextButton.Visibility" Value="Collapsed"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Medium">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomAppBar.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="PreviousButton.Visibility" Value="Visible"></Setter>
+                        <Setter Target="NextButton.Visibility" Value="Visible"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -23,25 +48,67 @@
         </Grid>
         <!-- Content -->
         <Grid Name="ContentGrid" Grid.Row="1" Padding="0,10">
-            <ProgressBar Name="ProgressBar"
-                         IsIndeterminate="True"
-                         Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                         Visibility="Collapsed"
-                         Width="200" />
-            <ScrollViewer Name="sv" 
-                          ViewChanged="OnScrollViewerViewChanged"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <Button Name="PreviousButton" 
+                        Click="PreviousButton_Click" 
+                        Background="Transparent"
+                        IsEnabled="False" 
+                        Style="{StaticResource PageNavButton}">
+                    <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
+                          Glyph="&#xE760;" 
+                          FontSize="25"/>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <ProgressBar Name="ProgressBar"
+                             IsIndeterminate="True"
+                             Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                             Visibility="Collapsed"
+                             Width="200" />
+                <ScrollViewer Name="sv" 
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto">
-                <Grid HorizontalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Name="ColumnOne" Orientation="Vertical" Grid.Column="0" />
-                    <StackPanel Name="ColumnTwo" Orientation="Vertical" Grid.Column="1" />
-                </Grid>
-            </ScrollViewer>
+                        <StackPanel Name="ColumnOne" Orientation="Vertical" Grid.Column="0" />
+                        <StackPanel Name="ColumnTwo" Orientation="Vertical" Grid.Column="1" />
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Column="2">
+                <Button Name="NextButton" 
+                        Click="NextButton_Click" 
+                        Background="Transparent"
+                        Style="{StaticResource PageNavButton}"
+                        IsEnabled="False">
+                    <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
+                          Glyph="&#xE761;"
+                          FontSize="25"/>
+                </Button>
+            </Grid>
         </Grid>
     </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar Name="BottomAppBar" 
+                    IsOpen="False"
+                    IsSticky="True">
+            <AppBarButton Name="PreviousAppButton" Icon="Back" Label="Previous" Click="PreviousButton_Click" IsEnabled="False"/>
+            <AppBarButton Name="NextAppButton" Icon="Forward" Label="Next" Click="NextButton_Click" IsEnabled="False"/>
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>

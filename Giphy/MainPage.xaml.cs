@@ -4,8 +4,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using System.Net.NetworkInformation;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+using System.Collections.Generic;
+using Windows.UI.Xaml.Input;
+using System.Diagnostics;
+using Windows.UI.Xaml.Media;
+using Windows.UI;
 
 namespace Giphy
 {
@@ -80,19 +83,41 @@ namespace Giphy
         {
             if (SearchGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(SearchPage));
+                PivotNavigation.SelectedIndex = 0;
             }
             else if (TrendingGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(TrendingPage));
+                PivotNavigation.SelectedIndex = 1;
             }
             else if (FavoriteGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(FavoritesPage));
+                PivotNavigation.SelectedIndex = 2;
             }
             else if (RecentGifs.IsSelected)
             {
-                ContentFrame.Navigate(typeof(RecentPage));
+                PivotNavigation.SelectedIndex = 3;
+            }
+        }
+
+        private void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (PivotNavigation.SelectedIndex)
+            {
+                case 0:
+                    ContentFrame.Navigate(typeof(SearchPage));
+                    break;
+                case 1:
+                    ContentFrame.Navigate(typeof(TrendingPage));
+                    break;
+                case 2:
+                    ContentFrame.Navigate(typeof(FavoritesPage));
+                    break;
+                case 3:
+                    ContentFrame.Navigate(typeof(RecentPage));
+                    break;
+                default:
+                    ContentFrame.Navigate(typeof(SearchPage));
+                    break;
             }
         }
     }

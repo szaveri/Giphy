@@ -14,9 +14,10 @@ namespace Giphy
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-        private static int total = int.MaxValue;
-        private static int offset = 0;
-        private static string searchValue = "";
+        private static int Total = 0;
+        private static int Offset = 0;
+        private static int PreviousOffset = 0;
+        private static string SearchValue = "";
 
         public SearchPage()
         {
@@ -29,10 +30,10 @@ namespace Giphy
         */
         private void GifSearch(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs arg)
         {
-            offset = 0;
+            Offset = 0;
             this.ColumnOne.Children.Clear();
             this.ColumnTwo.Children.Clear();
-            searchValue = arg.QueryText;
+            SearchValue = arg.QueryText;
             GetGifs();
         }
 
@@ -41,14 +42,18 @@ namespace Giphy
          */
         private async void GetGifs()
         {
+            PreviousOffset = Offset;
             this.ProgressBar.Visibility = Visibility.Visible;
 
-            Uri uri = HttpRequest.GenerateURL("search", offset, Uri.EscapeDataString(searchValue));
+            Uri uri = HttpRequest.GenerateURL("search", Offset, Uri.EscapeDataString(SearchValue));
             var response = await HttpRequest.GetQuery(uri);
             var list = response.data;
 
-            total = response.pagination.total_count;
-            offset += response.pagination.count;
+            Total = response.pagination.total_count;
+            Offset += response.pagination.count;
+
+            this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - response.pagination.count > 0;
+            this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = Offset < Total;
 
             //Draws list on scroll view
             for (int i = 0; i < list.Count; i++)
@@ -72,22 +77,29 @@ namespace Giphy
         }
 
         /*
-         * Load additional GIFs when scrollbar reaches bottom
+         * Load previous set of GIFs
          */
-        private void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (offset >= total)
-                return;
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
 
-            var verticalOffset = sv.VerticalOffset;
-            var maxVerticalOffset = sv.ScrollableHeight; //sv.ExtentHeight - sv.ViewportHeight;
+            Offset = PreviousOffset;
+            if (Offset - Global.limit >= 0) Offset -= Global.limit;
+            else Offset -= Offset;
 
-            if (maxVerticalOffset < 0 ||
-                verticalOffset == maxVerticalOffset)
-            {
-                // Scrolled to bottom
-                GetGifs();
-            }
+            GetGifs();
+        }
+
+        /*
+         * Load next set of GIFs
+         */
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+
+            GetGifs();
         }
     }
 }

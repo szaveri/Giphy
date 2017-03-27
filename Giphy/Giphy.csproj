@@ -98,9 +98,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="cs\Globals.cs" />
-    <Compile Include="cs\HttpRequests.cs" />
-    <Compile Include="cs\Images.cs" />
+    <Compile Include="Models\Globals.cs" />
+    <Compile Include="Models\HttpRequests.cs" />
+    <Compile Include="Models\Images.cs" />
     <Compile Include="Database\GiphyDatabase.cs" />
     <Compile Include="Database\Favorites.cs" />
     <Compile Include="Database\Recents.cs" />
@@ -116,6 +116,9 @@
     </Compile>
     <Compile Include="SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TabHeader.xaml.cs">
+      <DependentUpon>TabHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrendingPage.xaml.cs">
       <DependentUpon>TrendingPage.xaml</DependentUpon>
@@ -155,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -16,8 +16,8 @@ namespace Giphy
     public sealed partial class TrendingPage : Page
     {
 
-        private static int offset = 0;
-        private static List<Datum> TrendingList = new List<Datum>();
+        private static int Offset = 0;
+        private static int PreviousOffset = 0;
 
         public TrendingPage()
         {
@@ -30,16 +30,8 @@ namespace Giphy
          */
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //Only load a default view of trending images if page contains no content
-            if (offset == 0)
-                GetTrending();
-            else
-            {
-                this.ColumnOne.Children.Clear();
-                this.ColumnTwo.Children.Clear();
-                DrawList(TrendingList);
-            }
-                
+            Offset = PreviousOffset;
+            GetTrending();     
         }
 
         /*
@@ -48,16 +40,18 @@ namespace Giphy
          */
         private async void GetTrending()
         {
-            ProgressBar.Visibility = Visibility.Visible;
-            Uri uri = HttpRequest.GenerateURL("trending", offset, null);
+            PreviousOffset = Offset;
+            this.ProgressBar.Visibility = Visibility.Visible;
+            Uri uri = HttpRequest.GenerateURL("trending", Offset, null);
             var response = await HttpRequest.GetQuery(uri);
             var list = response.data;
-            TrendingList.AddRange(list);
-            offset += response.pagination.count;
+            Offset += response.pagination.count;
+
+            this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - response.pagination.count > 0;
 
             DrawList(list);
             
-            ProgressBar.Visibility = Visibility.Collapsed;
+            this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
         /*
@@ -87,19 +81,29 @@ namespace Giphy
         }
 
         /*
-         * Load additional GIFs when scrollbar reaches bottom
+         * Load previous set of GIFs
          */
-        private void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            var verticalOffset = sv.VerticalOffset;
-            var maxVerticalOffset = sv.ScrollableHeight; //sv.ExtentHeight - sv.ViewportHeight;
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
 
-            if (maxVerticalOffset < 0 ||
-                verticalOffset == maxVerticalOffset)
-            {
-                // Scrolled to bottom
-                GetTrending();
-            }
+            Offset = PreviousOffset;
+            if (Offset - Global.limit >= 0) Offset -= Global.limit;
+            else Offset -= Offset;
+
+            GetTrending();
+        }
+
+        /*
+         * Load next set of GIFs
+         */
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+
+            GetTrending();
         }
     }
 }
