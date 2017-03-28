@@ -79,26 +79,6 @@ namespace Giphy
             }
         }
 
-        private void NavSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (SearchGifs.IsSelected)
-            {
-                PivotNavigation.SelectedIndex = 0;
-            }
-            else if (TrendingGifs.IsSelected)
-            {
-                PivotNavigation.SelectedIndex = 1;
-            }
-            else if (FavoriteGifs.IsSelected)
-            {
-                PivotNavigation.SelectedIndex = 2;
-            }
-            else if (RecentGifs.IsSelected)
-            {
-                PivotNavigation.SelectedIndex = 3;
-            }
-        }
-
         private void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (PivotNavigation.SelectedIndex)
