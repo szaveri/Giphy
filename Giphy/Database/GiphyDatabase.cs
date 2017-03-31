@@ -49,11 +49,9 @@ namespace Giphy.Database
         public static List<Favorites> GetFavorites(SQLiteConnection conn)
         {
             //return (from i in conn.Table<Favorites>() select i);
+            var cmd = conn.CreateCommand("SELECT * FROM Favorites ORDER BY Timestamp DESC");
             var list = new List<Favorites>();
-            var query = conn.Table<Favorites>();
-
-            foreach (var fav in query)
-                list.Add(fav);
+            list = cmd.ExecuteQuery<Favorites>();
 
             return list;
         }
@@ -102,11 +100,9 @@ namespace Giphy.Database
         public static List<Recents> GetRecents(SQLiteConnection conn)
         {
             //return (from i in conn.Table<Favorites>() select i);
+            var cmd = conn.CreateCommand("SELECT * FROM Recents ORDER BY Timestamp DESC");
             var list = new List<Recents>();
-            var query = conn.Table<Recents>();
-
-            foreach (var recent in query)
-                list.Add(recent);
+            list = cmd.ExecuteQuery<Recents>();
 
             return list;
         }
