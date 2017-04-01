@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Giphy
+namespace Gifology
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

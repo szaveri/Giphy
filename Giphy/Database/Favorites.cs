@@ -1,16 +1,17 @@
 ﻿using System;
 using SQLite;
 
-namespace Giphy.Database
+namespace Gifology.Database
 {
     public class Favorites
     {
         public Favorites() { }
         [PrimaryKey]
         public int? Id { get; set; } = null;
-        [Unique, NotNull]
+        [NotNull]
         public string Giphy_Id { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
+        public int Category { get; set; } = 0;
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

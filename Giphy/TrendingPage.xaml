@@ -1,8 +1,8 @@
 ﻿<Page
-    x:Class="Giphy.TrendingPage"
+    x:Class="Gifology.TrendingPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Giphy"
+    xmlns:local="using:Gifology"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded">
@@ -97,14 +97,20 @@
                     IsOpen="False"
                     IsSticky="True">
             <AppBarButton Name="PreviousAppButton" 
-                          Icon="Back" 
                           Label="Previous" 
                           Click="PreviousButton_Click" 
-                          IsEnabled="False"/>
+                          IsEnabled="False">
+                <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          Glyph="&#xE72B;" />
+            </AppBarButton>
             <AppBarButton Name="NextAppButton" 
-                          Icon="Forward" 
                           Label="Next" 
-                          Click="NextButton_Click" />
+                          Click="NextButton_Click">
+                <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          Glyph="&#xE72A;" />
+            </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

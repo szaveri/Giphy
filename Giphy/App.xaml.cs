@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using SQLite;
-using Giphy.Database;
+using Gifology.Database;
 
-namespace Giphy
+namespace Gifology
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -35,7 +35,7 @@ namespace Giphy
         public App()
         {
             this.InitializeComponent();
-            GiphyDatabase.CreateDatabase();
+            GifologyDatabase.CreateDatabase();
         }
 
         /// <summary>

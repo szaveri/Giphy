@@ -7,8 +7,8 @@
     <ProjectGuid>{EA02B861-22F0-47EF-9494-B8E8AF669B05}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GIFology</RootNamespace>
-    <AssemblyName>GIFology</AssemblyName>
+    <RootNamespace>Gifology</RootNamespace>
+    <AssemblyName>Gifology</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
@@ -98,14 +98,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Database\Categories.cs" />
     <Compile Include="Models\Globals.cs" />
     <Compile Include="Models\HttpRequests.cs" />
     <Compile Include="Models\Images.cs" />
     <Compile Include="Database\GiphyDatabase.cs" />
     <Compile Include="Database\Favorites.cs" />
     <Compile Include="Database\Recents.cs" />
-    <Compile Include="FavoritePage.xaml.cs">
-      <DependentUpon>FavoritePage.xaml</DependentUpon>
+    <Compile Include="MyGifsPage.xaml.cs">
+      <DependentUpon>MyGifsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -178,7 +179,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="FavoritePage.xaml">
+    <Page Include="MyGifsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

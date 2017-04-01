@@ -12,33 +12,43 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Giphy.Database;
+using Gifology.Database;
 using SQLite;
 using Windows.UI.Xaml.Media.Imaging;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Giphy
+namespace Gifology
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class FavoritesPage : Page
+    public sealed partial class MyGifsPage : Page
     {
 
-        private static List<Giphy.Database.Favorites> FavoriteList = new List<Giphy.Database.Favorites>();
+        private static List<Gifology.Database.Favorites> FavoriteList = new List<Gifology.Database.Favorites>();
 
-        public FavoritesPage()
+        public MyGifsPage()
         {
             this.InitializeComponent();
             GiphyImage.RegisterForShare();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ColumnOne.Children.Clear();
-            this.ColumnTwo.Children.Clear();
-            GetFavorites();
+            switch (await Global.CheckInternetConnection())
+            {
+                case "Continue":
+                    this.ColumnOne.Children.Clear();
+                    this.ColumnTwo.Children.Clear();
+                    GetFavorites();
+                    break;
+                case "Try Again":
+                    Page_Loaded(sender, e);
+                    break;
+                case "Close":
+                    break;
+            }
         }
 
         /*
@@ -48,13 +58,13 @@ namespace Giphy
         {
             using (var conn = new SQLiteConnection(Global.databaseFile))
             {
-                FavoriteList = GiphyDatabase.GetFavorites(conn);
+                FavoriteList = GifologyDatabase.GetFavorites(conn);
             }
                 
             DrawList(FavoriteList);
         }
 
-        private void DrawList(List<Giphy.Database.Favorites> list)
+        private void DrawList(List<Gifology.Database.Favorites> list)
         {
             this.ProgressBar.Visibility = Visibility.Visible;
 
@@ -75,6 +85,31 @@ namespace Giphy
                     this.ColumnTwo.Children.Add(img);
             }
             this.ProgressBar.Visibility = Visibility.Collapsed;
+        }
+
+        private void CategoryShowButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RecentShowButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void FavoritesShowButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Diagnostics;
 using Windows.UI.Xaml.Media;
 using Windows.UI;
 
-namespace Giphy
+namespace Gifology
 {
     public sealed partial class MainPage : Page
     {
@@ -22,10 +22,21 @@ namespace Giphy
         /*
          * Runs check for user's internet connection on app load 
          */
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            CheckInternetConnection();
+            switch(await Global.CheckInternetConnection())
+            {
+                case "Continue":
+                    ContentFrame.Navigate(typeof(SearchPage));
+                    break;
+                case "Try Again":
+                    Page_Loaded(sender, e);
+                    break;
+                case "Close":
+                    break;
+            }
         }
+                
 
         private async void CheckInternetConnection()
         {
@@ -90,7 +101,7 @@ namespace Giphy
                     ContentFrame.Navigate(typeof(TrendingPage));
                     break;
                 case 2:
-                    ContentFrame.Navigate(typeof(FavoritesPage));
+                    ContentFrame.Navigate(typeof(MyGifsPage));
                     break;
                 case 3:
                     ContentFrame.Navigate(typeof(RecentPage));

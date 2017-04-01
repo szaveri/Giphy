@@ -1,4 +1,4 @@
-﻿using Giphy.Database;
+﻿using Gifology.Database;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -18,14 +18,14 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Giphy
+namespace Gifology
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class RecentPage : Page
     {
-        private static List<Giphy.Database.Recents> RecentList = new List<Giphy.Database.Recents>();
+        private static List<Gifology.Database.Recents> RecentList = new List<Gifology.Database.Recents>();
 
         public RecentPage()
         {
@@ -47,13 +47,13 @@ namespace Giphy
         {
             using (var conn = new SQLiteConnection(Global.databaseFile))
             {
-                RecentList = GiphyDatabase.GetRecents(conn);
+                RecentList = GifologyDatabase.GetRecents(conn);
             }
 
             DrawList(RecentList);
         }
 
-        private void DrawList(List<Giphy.Database.Recents> list)
+        private void DrawList(List<Gifology.Database.Recents> list)
         {
             this.ProgressBar.Visibility = Visibility.Visible;
 

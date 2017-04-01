@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Giphy
+namespace Gifology
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -26,10 +26,21 @@ namespace Giphy
         /*
          * Gets new set of Trending GIFs if not previously queried on page load
          */
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Offset = PreviousOffset;
-            GetTrending();     
+            switch (await Global.CheckInternetConnection())
+            {
+                case "Continue":
+                    Offset = PreviousOffset;
+                    GetTrending();
+                    break;
+                case "Try Again":
+                    Page_Loaded(sender, e);
+                    break;
+                case "Close":
+                    break;
+            }
+            
         }
 
         /*

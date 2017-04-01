@@ -3,14 +3,13 @@ using SQLite;
 
 namespace Gifology.Database
 {
-    public class Recents
+    public class Categories
     {
-        public Recents() { }
+        public Categories() { }
         [PrimaryKey]
         public int? Id { get; set; } = null;
         [Unique, NotNull]
-        public string Giphy_Id { get; set; } = string.Empty;
-        public string Url { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

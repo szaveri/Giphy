@@ -4,34 +4,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 
-namespace Giphy.Database
+namespace Gifology.Database
 {
-    public class GiphyDatabase
+    public class GifologyDatabase
     {
         private static SQLiteAsyncConnection aconn = new SQLiteAsyncConnection(Global.databaseFile);
 
-        public GiphyDatabase()
+        public GifologyDatabase()
         {
 
         }
 
         public static void CreateDatabase()
         {
-            try
+            using(var conn = new SQLiteConnection(Global.databaseFile))
             {
-                var conn = new SQLiteConnection(Global.databaseFile);
+                try
+                {
+                    conn.Execute("BEGIN TRANSACTION");
 
-                if (!IfTableExists(conn, "Favorites"))
-                    conn.CreateTable<Favorites>();
-                if (!IfTableExists(conn, "Recents"))
-                    conn.CreateTable<Recents>();
+                    if (!IfTableExists(conn, "Favorites"))
+                        conn.CreateTable<Favorites>();
+                    if (!IfTableExists(conn, "Recents"))
+                        conn.CreateTable<Recents>();
+                    if (!IfTableExists(conn, "Categories"))
+                    {
+                        conn.CreateTable<Categories>();
+                    }
+                    if(conn.Table<Categories>().Where(x => x.Name == "Uncategorized").Count() == 0)
+                    {
+                        var uncategorized = new Categories();
+                        uncategorized.Name = "Uncategorized";
+                        conn.Insert(uncategorized);
+                    }
 
-                conn.Close();
+                    conn.Execute("COMMIT TRANSACTION");
+                }
+                catch (SQLiteException e)
+                {
+                    Debug.WriteLine("DB EXCEPTION: " + e.Message);
+                    conn.Execute("ROLLBACK");
+                }
             }
-            catch (SQLiteException e)
-            {
-                Debug.WriteLine("DB EXCEPTION: " + e.Message);
-            }
+            
         }
 
         public static bool IfTableExists(SQLiteConnection conn, string table)

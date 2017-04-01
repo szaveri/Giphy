@@ -9,10 +9,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
-using Giphy.Database;
+using Gifology.Database;
 using SQLite;
 
-namespace Giphy
+namespace Gifology
 {
     public class GiphyImage
     {
@@ -57,7 +57,7 @@ namespace Giphy
             {
                 using (var conn = new SQLiteConnection(Global.databaseFile))
                 {
-                    var item = GiphyDatabase.GetFavorite(conn, img.Name);
+                    var item = GifologyDatabase.GetFavorite(conn, img.Name);
                     if (item != null)
                     {
                         MenuFlyoutItem unfavorite = new MenuFlyoutItem { Text = "Remove from Favorites" };
@@ -113,10 +113,10 @@ namespace Giphy
             DataTransferManager.ShowShareUI();
 
             //Add to Recents database
-            var data = new Giphy.Database.Recents();
+            var data = new Gifology.Database.Recents();
             data.Giphy_Id = img.Name;
             data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
-            GiphyDatabase.InsertUpdateRecent(data);
+            GifologyDatabase.InsertUpdateRecent(data);
         }
 
         /*
@@ -154,10 +154,10 @@ namespace Giphy
             Clipboard.Flush();
 
             //Add to Recents database
-            var data = new Giphy.Database.Recents();
+            var data = new Gifology.Database.Recents();
             data.Giphy_Id = img.Name;
             data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
-            GiphyDatabase.InsertUpdateRecent(data);
+            GifologyDatabase.InsertUpdateRecent(data);
         }
 
         /*
@@ -165,18 +165,18 @@ namespace Giphy
          */
         private static void FavoriteImage(object sender, RoutedEventArgs e, Image img)
         {
-            var data = new Giphy.Database.Favorites();
+            var data = new Gifology.Database.Favorites();
             data.Giphy_Id = img.Name;
             data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
-            GiphyDatabase.InsertUpdateFavorite(data);
+            GifologyDatabase.InsertUpdateFavorite(data);
         }
 
         /*
          * Event handler to remove image from favorites`
          */
-        private static void UnfavoriteImage(object sender, RoutedEventArgs e, Giphy.Database.Favorites favorite)
+        private static void UnfavoriteImage(object sender, RoutedEventArgs e, Gifology.Database.Favorites favorite)
         {
-            GiphyDatabase.DeleteFavorite(favorite);
+            GifologyDatabase.DeleteFavorite(favorite);
         }
     }
 }
