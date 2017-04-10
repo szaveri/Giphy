@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Gifology.Database;
 using SQLite;
+using System.Collections.Generic;
 
 namespace Gifology
 {
@@ -94,7 +95,7 @@ namespace Gifology
          * Downloads file for sharing
          * Displays Share UI
          */
-        private static async void ShareImage(object sender, RoutedEventArgs e, Image img)
+        public static async void ShareImage(object sender, RoutedEventArgs e, Image img)
         {
             string fileName = img.Name + ".gif";
 
@@ -125,15 +126,21 @@ namespace Gifology
         private static async void ShareImageHandler(DataTransferManager sender, DataRequestedEventArgs e)
         {
             DataRequest request = e.Request;
-            request.Data.Properties.Title = "Share Image";
-            request.Data.Properties.Description = "Shared image from Giphy";
-
             DataRequestDeferral deferral = request.GetDeferral();
 
             try
             {
-                StorageFile imageFile = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Global.shareFileName);
-                request.Data.SetBitmap(RandomAccessStreamReference.CreateFromFile(imageFile));
+                DataPackage requestData = request.Data;
+                requestData.Properties.Title = "Share Image";
+                requestData.Properties.Description = "Shared image from Gifology";
+
+                List<IStorageItem> imageItems = new List<IStorageItem>();
+                imageItems.Add(await ApplicationData.Current.TemporaryFolder.GetFileAsync(Global.shareFileName));
+                requestData.SetStorageItems(imageItems);
+
+                RandomAccessStreamReference imageStreamRef = RandomAccessStreamReference.CreateFromFile(await ApplicationData.Current.TemporaryFolder.GetFileAsync(Global.shareFileName));
+                requestData.Properties.Thumbnail = imageStreamRef;
+                requestData.SetBitmap(imageStreamRef);
             }
             finally
             {

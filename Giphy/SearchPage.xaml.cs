@@ -79,7 +79,7 @@ namespace Gifology
                 {
                     Image img = new Image();
                     img.Name = list[i].id;
-                    img.Source = new BitmapImage(new Uri(list[i].images.fixed_width.url, UriKind.Absolute));
+                    img.Source = new BitmapImage(new Uri(list[i].images.fixed_width_downsampled.url, UriKind.Absolute));
                     img.Margin = new Thickness(0, 0, 10, 10);
                     img.Stretch = Stretch.UniformToFill;
                     img.MaxWidth = 400;

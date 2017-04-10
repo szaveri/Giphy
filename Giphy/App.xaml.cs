@@ -78,8 +78,6 @@ namespace Gifology
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
-                        ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
 
