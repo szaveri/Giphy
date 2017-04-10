@@ -24,7 +24,7 @@ namespace Gifology
          */
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            switch(await Global.CheckInternetConnection())
+            switch (await Global.CheckInternetConnection())
             {
                 case "Continue":
                     ContentFrame.Navigate(typeof(SearchPage));
@@ -36,7 +36,6 @@ namespace Gifology
                     break;
             }
         }
-                
 
         private async void CheckInternetConnection()
         {
@@ -102,9 +101,6 @@ namespace Gifology
                     break;
                 case 2:
                     ContentFrame.Navigate(typeof(MyGifsPage));
-                    break;
-                case 3:
-                    ContentFrame.Navigate(typeof(RecentPage));
                     break;
                 default:
                     ContentFrame.Navigate(typeof(SearchPage));

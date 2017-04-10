@@ -33,7 +33,18 @@ namespace Gifology
             Offset = 0;
             this.ColumnOne.Children.Clear();
             this.ColumnTwo.Children.Clear();
+
             SearchValue = arg.QueryText;
+
+            if(SearchValue == "")
+            {
+                NoSearchText.Visibility = Visibility.Visible;
+                NoSearchText.Text = "Start searching for that perfect GIF!";
+                this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = false;
+                this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = false;
+                return;
+            }
+
             GetGifs();
         }
 
@@ -55,24 +66,34 @@ namespace Gifology
             this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - response.pagination.count > 0;
             this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = Offset < Total;
 
-            //Draws list on scroll view
-            for (int i = 0; i < list.Count; i++)
+            if (list.Count == 0)
             {
-                Image img = new Image();
-                img.Name = list[i].id;
-                img.Source = new BitmapImage(new Uri(list[i].images.fixed_width.url, UriKind.Absolute));
-                img.Margin = new Thickness(0, 0, 10, 10);
-                img.Stretch = Stretch.UniformToFill;
-                img.MaxWidth = 400;
-                img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
-                img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
-
-                if (i % 2 == 0)
-                    this.ColumnOne.Children.Add(img);
-                else
-                    this.ColumnTwo.Children.Add(img);
+                NoSearchText.Visibility = Visibility.Visible;
+                NoSearchText.Text = "No GIFs Found";
             }
+            else
+            {
+                NoSearchText.Visibility = Visibility.Collapsed;
 
+                for (int i = 0; i < list.Count; i++)
+                {
+                    Image img = new Image();
+                    img.Name = list[i].id;
+                    img.Source = new BitmapImage(new Uri(list[i].images.fixed_width.url, UriKind.Absolute));
+                    img.Margin = new Thickness(0, 0, 10, 10);
+                    img.Stretch = Stretch.UniformToFill;
+                    img.MaxWidth = 400;
+                    img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
+                    img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
+
+                    if (i % 2 == 0)
+                        this.ColumnOne.Children.Add(img);
+                    else
+                        this.ColumnTwo.Children.Add(img);
+                }
+            }
+            //Draws list on scroll view
+            
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 

@@ -57,7 +57,7 @@ namespace Gifology
             {
                 using (var conn = new SQLiteConnection(Global.databaseFile))
                 {
-                    var item = GifologyDatabase.GetFavorite(conn, img.Name);
+                    var item = GifologyDatabase.GetFavorite(img.Name);
                     if (item != null)
                     {
                         MenuFlyoutItem unfavorite = new MenuFlyoutItem { Text = "Remove from Favorites" };

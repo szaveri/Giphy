@@ -25,8 +25,9 @@ namespace Gifology
     /// </summary>
     public sealed partial class MyGifsPage : Page
     {
-
-        private static List<Gifology.Database.Favorites> FavoriteList = new List<Gifology.Database.Favorites>();
+        private int Offset = 0;
+        private int PreviousOffset = 0;
+        private string CurrentView = "Favorite";
 
         public MyGifsPage()
         {
@@ -39,9 +40,7 @@ namespace Gifology
             switch (await Global.CheckInternetConnection())
             {
                 case "Continue":
-                    this.ColumnOne.Children.Clear();
-                    this.ColumnTwo.Children.Clear();
-                    GetFavorites();
+                    ViewBox.SelectedValue = "Favorite";
                     break;
                 case "Try Again":
                     Page_Loaded(sender, e);
@@ -51,23 +50,25 @@ namespace Gifology
             }
         }
 
-        /*
-         * Get new set from Favorites database
+        /* ==================================
+         * START FAVORITE FUNCTIONS
+         * ==================================
          */
-        private void GetFavorites()
+        private async void GetFavorites()
         {
-            using (var conn = new SQLiteConnection(Global.databaseFile))
-            {
-                FavoriteList = GifologyDatabase.GetFavorites(conn);
-            }
-                
-            DrawList(FavoriteList);
+            this.ProgressBar.Visibility = Visibility.Visible;
+
+            PreviousOffset = Offset;
+            DrawList(await GifologyDatabase.GetFavorites(Offset));
+            Offset += Global.limit;
+            this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - Global.limit > 0;
+
+            this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
         private void DrawList(List<Gifology.Database.Favorites> list)
         {
-            this.ProgressBar.Visibility = Visibility.Visible;
-
+            this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = list.Count > Global.limit;
             for (int i = 0; i < list.Count; i++)
             {
                 Image img = new Image();
@@ -84,32 +85,87 @@ namespace Gifology
                 else
                     this.ColumnTwo.Children.Add(img);
             }
+            
+        }
+
+        /* ==================================
+         * START RECENT FUNCTIONS
+         * ==================================
+         */
+        private async void GetRecents()
+        {
+            this.ProgressBar.Visibility = Visibility.Visible;
+
+            PreviousOffset = Offset;
+            DrawList(await GifologyDatabase.GetRecents(Offset));
+            Offset += Global.limit;
+            this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - Global.limit > 0;
+
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private void CategoryShowButton_Click(object sender, RoutedEventArgs e)
+        private void DrawList(List<Gifology.Database.Recents> list)
         {
+            this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = list.Count > Global.limit;
+            for (int i = 0; i < list.Count; i++)
+            {
+                Image img = new Image();
+                img.Name = list[i].Giphy_Id;
+                img.Source = new BitmapImage(new Uri(list[i].Url, UriKind.Absolute));
+                img.Margin = new Thickness(0, 0, 10, 10);
+                img.Stretch = Stretch.UniformToFill;
+                img.MaxWidth = 400;
+                img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
+                img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
 
+                if (i % 2 == 0)
+                    this.ColumnOne.Children.Add(img);
+                else
+                    this.ColumnTwo.Children.Add(img);
+            }
         }
 
-        private void RecentShowButton_Click(object sender, RoutedEventArgs e)
+        private void ViewBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+            var selected = ((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString();
+            Offset = 0;
+            CurrentView = selected;
 
-        }
-
-        private void FavoritesShowButton_Click(object sender, RoutedEventArgs e)
-        {
-
+            switch (selected)
+            {
+                case "Favorite":
+                    GetFavorites();
+                    break;
+                case "Recent":
+                    GetRecents();
+                    break;
+            }
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+            Offset = PreviousOffset;
+            if (Offset - Global.limit >= 0) Offset -= Global.limit;
+            else Offset -= Offset;
 
+            if (CurrentView == "Favorite")
+                GetFavorites();
+            else if (CurrentView == "Recent")
+                GetRecents();
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-
+            this.ColumnOne.Children.Clear();
+            this.ColumnTwo.Children.Clear();
+            if (CurrentView == "Favorite")
+                GetFavorites();
+            else if (CurrentView == "Recent")
+                GetRecents();
         }
     }
 }

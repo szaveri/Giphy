@@ -76,7 +76,7 @@
                 <TextBlock x:Name="NoSearchText" 
                            FontFamily="Segoe UI"
                            TextWrapping="Wrap" 
-                           Text="Start searching by entering a value in the search box" 
+                           Text="Start searching for that perfect GIF!" 
                            TextAlignment="Center"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            Padding="20"/>

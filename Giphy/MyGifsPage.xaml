@@ -8,20 +8,98 @@
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomAppBar.Visibility" Value="Visible"></Setter>
+                        <Setter Target="PreviousButton.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="NextButton.Visibility" Value="Collapsed"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Medium">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BottomAppBar.Visibility" Value="Collapsed"></Setter>
+                        <Setter Target="PreviousButton.Visibility" Value="Visible"></Setter>
+                        <Setter Target="NextButton.Visibility" Value="Visible"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Button Name="PreviousButton" 
+                    Click="PreviousButton_Click" 
+                    Background="Transparent"
+                    IsEnabled="False" 
+                    Style="{StaticResource PageNavButton}">
+                <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
+                          Glyph="&#xE760;" 
+                          FontSize="25"/>
+            </Button>
+        </Grid>
+
         <!-- Content -->
-        <Grid Name="ContentGrid" Grid.Row="1" Padding="0,10">
+        <Grid Name="ContentGrid" Grid.Row="0" Grid.Column="1" Padding="0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
             <ProgressBar Name="ProgressBar"
                          IsIndeterminate="True"
                          Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                          Visibility="Visible"
-                         Width="200" />
+                         Width="200"
+                         Grid.Row="1" />
+            
+            <ComboBox Name="ViewBox" 
+                      SelectionChanged="ViewBox_SelectionChanged" 
+                      AllowDrop="True" 
+                      SelectedValuePath="Tag" 
+                      Margin="0,0,0,10" 
+                      Height="40"
+                      Style="{StaticResource BorderlessComboBox}">
+                <ComboBoxItem Tag="Favorite">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"
+                                      Glyph="&#xE734;" 
+                                      Margin="0,0,5,0"/>
+                        <TextBlock Text="Favorites" />
+                    </StackPanel>
+                </ComboBoxItem>
+                <ComboBoxItem Tag="Recent">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"
+                                      Glyph="&#xE823;" 
+                                      Margin="0,0,5,0"/>
+                        <TextBlock Text="Recent"/>
+                    </StackPanel>
+                </ComboBoxItem>
+            </ComboBox>
             <ScrollViewer Name="sv"
                           HorizontalScrollBarVisibility="Disabled"
-                          VerticalScrollBarVisibility="Auto">
+                          VerticalScrollBarVisibility="Auto"
+                          Grid.Row="1">
                 <Grid HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -33,34 +111,24 @@
                 </Grid>
             </ScrollViewer>
         </Grid>
+
+        <Grid Grid.Column="2">
+            <Button Name="NextButton" 
+                    Click="NextButton_Click" 
+                    Background="Transparent"
+                    Style="{StaticResource PageNavButton}">
+                <FontIcon HorizontalAlignment="Center" 
+                          VerticalAlignment="Center" 
+                          Glyph="&#xE761;"
+                          FontSize="25"/>
+            </Button>
+        </Grid>
     </Grid>
 
     <Page.BottomAppBar>
         <CommandBar Name="BottomAppBar" 
                     IsOpen="False"
                     IsSticky="True">
-            <AppBarButton Name="FavoritesShowButton" 
-                          Label="Favorites" 
-                          Click="FavoritesShowButton_Click">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE728;" />
-            </AppBarButton>
-            <AppBarButton Name="RecentShowButton" 
-                          Label="Recent" 
-                          Click="RecentShowButton_Click" 
-                          IsEnabled="True">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE823;" />
-            </AppBarButton>
-            <AppBarButton Name="CategoryShowButton" 
-                          Label="Category" 
-                          Click="CategoryShowButton_Click">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE82D;" />
-            </AppBarButton>
             <AppBarButton Name="PreviousAppButton" 
                           Label="Previous" 
                           Click="PreviousButton_Click" 

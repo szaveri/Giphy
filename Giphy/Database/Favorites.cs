@@ -11,7 +11,7 @@ namespace Gifology.Database
         [NotNull]
         public string Giphy_Id { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
-        public int Category { get; set; } = 0;
+        public int Category { get; set; } = 1;
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }
