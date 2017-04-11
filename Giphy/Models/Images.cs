@@ -25,7 +25,7 @@ namespace Gifology
             e.Handled = true;
             var flyout = GiphyImage.GenerateFlyout(img);
             FrameworkElement senderElement = sender as FrameworkElement;
-            flyout.ShowAt(senderElement);
+            flyout.ShowAt(senderElement, e.GetPosition((UIElement)sender));
         }
 
         public static void ShowContextMenu(object sender, RightTappedRoutedEventArgs e, Image img)
@@ -33,7 +33,7 @@ namespace Gifology
             e.Handled = true;
             var flyout = GiphyImage.GenerateFlyout(img);
             FrameworkElement senderElement = sender as FrameworkElement;
-            flyout.ShowAt(senderElement);
+            flyout.ShowAt(senderElement, e.GetPosition((UIElement)sender));
         }
 
         /*

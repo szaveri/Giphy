@@ -408,6 +408,7 @@
                            FontSize="10"/>
             </Grid>
             <Frame Name="ContentFrame" Grid.Row="2"/>
+            <Image Name="CoverImage" Visibility="Collapsed" Stretch="Fill" IsHitTestVisible="False"/>
         </Grid>
     </Grid>
 </Page>

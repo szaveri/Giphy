@@ -9,14 +9,44 @@ using Windows.UI.Xaml.Input;
 using System.Diagnostics;
 using Windows.UI.Xaml.Media;
 using Windows.UI;
+using System.Threading.Tasks;
 
 namespace Gifology
 {
     public sealed partial class MainPage : Page
     {
+
+        int CursorPosOne, CursorPosTwo;
+
+        public UIElement SplitContent { get; private set; }
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            WrapperGrid.ManipulationMode = ManipulationModes.TranslateRailsX | ManipulationModes.TranslateRailsY;
+            WrapperGrid.ManipulationStarted += (s, e) => CursorPosOne = (int)e.Position.X;
+            WrapperGrid.ManipulationCompleted += (s, e) =>
+            {
+                CursorPosTwo = (int)e.Position.X;
+                if (CursorPosOne > CursorPosTwo)
+                {
+                    //Swipe Left
+                    if (PivotNavigation.SelectedIndex == 2)
+                        PivotNavigation.SelectedIndex = 0;
+                    else
+                        PivotNavigation.SelectedIndex++;
+                }
+                else
+                {
+                    //Swipe Right
+                    if (PivotNavigation.SelectedIndex == 0)
+                        PivotNavigation.SelectedIndex = 2;
+                    else
+                        PivotNavigation.SelectedIndex--;
+                    
+                }
+            };
         }
 
         /*
@@ -89,7 +119,7 @@ namespace Gifology
             }
         }
 
-        private void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (PivotNavigation.SelectedIndex)
             {
