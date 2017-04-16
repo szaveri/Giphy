@@ -101,6 +101,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ImageListControl.xaml.cs">
+      <DependentUpon>ImageListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Database\Categories.cs" />
     <Compile Include="Models\Globals.cs" />
     <Compile Include="Models\HttpRequests.cs" />
@@ -184,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ImageListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MyGifsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -17,6 +17,9 @@ namespace Gifology
 {
     public class GiphyImage
     {
+        public string Name { get; set; }
+        public string Url { get; set; }
+
         /*
         * Opens context menu on tap or right click (hold)
         */
@@ -151,7 +154,7 @@ namespace Gifology
         /*
          * Event handler to copy image URL to clipboard
          */
-        private static void CopyImageUrl(object sender, RoutedEventArgs e, Image img)
+        public static void CopyImageUrl(object sender, RoutedEventArgs e, Image img)
         {
             DataPackage dataPackage = new DataPackage();
             var url = ((BitmapImage)img.Source).UriSource.OriginalString;
@@ -170,7 +173,7 @@ namespace Gifology
         /*
          *  Event handler to add image to favorites
          */
-        private static void FavoriteImage(object sender, RoutedEventArgs e, Image img)
+        public static void FavoriteImage(object sender, RoutedEventArgs e, Image img)
         {
             var data = new Gifology.Database.Favorites();
             data.Giphy_Id = img.Name;
@@ -181,7 +184,7 @@ namespace Gifology
         /*
          * Event handler to remove image from favorites`
          */
-        private static void UnfavoriteImage(object sender, RoutedEventArgs e, Gifology.Database.Favorites favorite)
+        public static void UnfavoriteImage(object sender, RoutedEventArgs e, Gifology.Database.Favorites favorite)
         {
             GifologyDatabase.DeleteFavorite(favorite);
         }

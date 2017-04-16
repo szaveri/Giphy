@@ -8,6 +8,8 @@ using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Gifology
 {
@@ -55,6 +57,16 @@ namespace Gifology
                     return "Continue";
                 }
             }
+        }
+
+        public static T FindParent<T>(DependencyObject dependencyObject) where T : DependencyObject
+        {
+            var parent = VisualTreeHelper.GetParent(dependencyObject);
+
+            if (parent == null) return null;
+
+            var parentT = parent as T;
+            return parentT ?? FindParent<T>(parent);
         }
     }    
 }

@@ -383,7 +383,7 @@
                 </Pivot.Style>
                 <PivotItem>
                     <PivotItem.Header>
-                        <local:TabHeader Label="Home" Glyph="&#xE80F;" />
+                        <local:TabHeader Label="Search" Glyph="&#xE721;" />
                     </PivotItem.Header>
                 </PivotItem>
 
@@ -408,7 +408,6 @@
                            FontSize="10"/>
             </Grid>
             <Frame Name="ContentFrame" Grid.Row="2"/>
-            <Image Name="CoverImage" Visibility="Collapsed" Stretch="Fill" IsHitTestVisible="False"/>
         </Grid>
     </Grid>
 </Page>
