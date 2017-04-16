@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Gifology.Database;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -18,11 +21,32 @@ namespace Gifology
         private static int Offset = 0;
         private static int PreviousOffset = 0;
         private static string SearchValue = "";
+        private ObservableCollection<GiphyImage> ColumnOneList = new ObservableCollection<GiphyImage>();
+        private ObservableCollection<GiphyImage> ColumnTwoList = new ObservableCollection<GiphyImage>();
 
         public SearchPage()
         {
             this.InitializeComponent();
             GiphyImage.RegisterForShare();
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            switch (await Global.CheckInternetConnection())
+            {
+                case "Continue":
+                    ImageListControl.NextButton_Clicked += new RoutedEventHandler(NextButton_Click);
+                    ImageListControl.PrevButton_Clicked += new RoutedEventHandler(PreviousButton_Click);
+                    ImageListControl.ShowSingleImageIcons += ShowSingleImageIcons;
+                    ImageListControl.ShowFullListIcons += ShowFullListIcons;
+                    break;
+                case "Try Again":
+                    Page_Loaded(sender, e);
+                    break;
+                case "Close":
+                    break;
+            }
+
         }
 
         /*
@@ -31,8 +55,8 @@ namespace Gifology
         private void GifSearch(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs arg)
         {
             Offset = 0;
-            this.ColumnOne.Children.Clear();
-            this.ColumnTwo.Children.Clear();
+            ColumnOneList.Clear();
+            ColumnTwoList.Clear();
 
             SearchValue = arg.QueryText;
 
@@ -40,8 +64,8 @@ namespace Gifology
             {
                 NoSearchText.Visibility = Visibility.Visible;
                 NoSearchText.Text = "Start searching for that perfect GIF!";
-                this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = false;
-                this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = false;
+                this.PreviousAppButton.IsEnabled = false;
+                this.NextAppButton.IsEnabled = false;
                 return;
             }
 
@@ -63,8 +87,11 @@ namespace Gifology
             Total = response.pagination.total_count;
             Offset += response.pagination.count;
 
-            this.PreviousAppButton.IsEnabled = this.PreviousButton.IsEnabled = Offset - response.pagination.count > 0;
-            this.NextAppButton.IsEnabled = this.NextButton.IsEnabled = Offset < Total;
+            this.PreviousAppButton.IsEnabled = Offset - response.pagination.count > 0;
+            this.NextAppButton.IsEnabled = Offset < Total;
+
+            ColumnOneList.Clear();
+            ColumnTwoList.Clear();
 
             if (list.Count == 0)
             {
@@ -77,24 +104,20 @@ namespace Gifology
 
                 for (int i = 0; i < list.Count; i++)
                 {
-                    Image img = new Image();
-                    img.Name = list[i].id;
-                    img.Source = list[i].images.fixed_width_downsampled != null ?
-                                        new BitmapImage(new Uri(list[i].images.fixed_width_downsampled.url, UriKind.Absolute)) :
-                                        new BitmapImage(new Uri(list[i].images.fixed_width.url, UriKind.Absolute)); img.Margin = new Thickness(0, 0, 10, 10);
-                    img.Stretch = Stretch.UniformToFill;
-                    img.MaxWidth = 400;
-                    img.Tapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
-                    img.RightTapped += (sender, e) => { GiphyImage.ShowContextMenu(sender, e, img); };
-
                     if (i % 2 == 0)
-                        this.ColumnOne.Children.Add(img);
+                        ColumnOneList.Add(new GiphyImage
+                        {
+                            Name = list[i].id,
+                            Url = list[i].images.fixed_width_downsampled != null ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
+                        });
                     else
-                        this.ColumnTwo.Children.Add(img);
+                        ColumnTwoList.Add(new GiphyImage
+                        {
+                            Name = list[i].id,
+                            Url = list[i].images.fixed_width_downsampled != null ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
+                        });
                 }
             }
-            //Draws list on scroll view
-            
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
@@ -103,9 +126,6 @@ namespace Gifology
          */
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ColumnOne.Children.Clear();
-            this.ColumnTwo.Children.Clear();
-
             Offset = PreviousOffset;
             if (Offset - Global.limit >= 0) Offset -= Global.limit;
             else Offset -= Offset;
@@ -118,10 +138,88 @@ namespace Gifology
          */
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            this.ColumnOne.Children.Clear();
-            this.ColumnTwo.Children.Clear();
-
             GetGifs();
+        }
+
+        private void CopyUrlAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageListControl.SelectedImage != null)
+                GiphyImage.CopyImageUrl(sender, e, ImageListControl.SelectedImage);
+        }
+
+        private void FavoriteAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageListControl.SelectedImage != null)
+            {
+                try
+                {
+                    var data = new Gifology.Database.Favorites();
+                    data.Giphy_Id = ImageListControl.SelectedImage.Name;
+                    data.Url = ((BitmapImage)ImageListControl.SelectedImage.Source).UriSource.OriginalString;
+                    GifologyDatabase.InsertUpdateFavorite(data);
+                    FavoriteAppButton.Visibility = Visibility.Collapsed;
+                    UnfavoriteAppButton.Visibility = Visibility.Visible;
+                }
+                catch (SQLite.SQLiteException ex)
+                {
+                    Debug.WriteLine("DB EXCEPTION: " + ex.Message);
+                }
+
+            }
+        }
+
+        private void UnfavoriteAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageListControl.SelectedImage != null)
+            {
+                try
+                {
+                    var item = GifologyDatabase.GetFavorite(ImageListControl.SelectedImage.Name);
+                    GiphyImage.UnfavoriteImage(sender, e, item);
+                    FavoriteAppButton.Visibility = Visibility.Visible;
+                    UnfavoriteAppButton.Visibility = Visibility.Collapsed;
+                }
+                catch (SQLite.SQLiteException ex)
+                {
+                    Debug.WriteLine("DB EXCEPTION: " + ex.Message);
+                }
+            }
+        }
+
+        private void ShareAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageListControl.SelectedImage != null)
+                GiphyImage.ShareImage(sender, e, ImageListControl.SelectedImage);
+        }
+
+        private void ShowSingleImageIcons()
+        {
+            PreviousAppButton.Visibility =
+                NextAppButton.Visibility = Visibility.Collapsed;
+
+            if (GifologyDatabase.GetFavorite(ImageListControl.SelectedImage.Name) != null)
+            {
+                FavoriteAppButton.Visibility = Visibility.Collapsed;
+                UnfavoriteAppButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                FavoriteAppButton.Visibility = Visibility.Visible;
+                UnfavoriteAppButton.Visibility = Visibility.Collapsed;
+            }
+
+            CopyUrlAppButton.Visibility = ShareAppButton.Visibility = Visibility.Visible;
+        }
+
+        private void ShowFullListIcons()
+        {
+            PreviousAppButton.Visibility =
+                NextAppButton.Visibility = Visibility.Visible;
+
+            FavoriteAppButton.Visibility =
+                UnfavoriteAppButton.Visibility =
+                ShareAppButton.Visibility =
+                CopyUrlAppButton.Visibility = Visibility.Collapsed;
         }
     }
 }

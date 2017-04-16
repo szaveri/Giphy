@@ -21,7 +21,6 @@ namespace Gifology
         private int PreviousOffset = 0;
         private ObservableCollection<GiphyImage> ColumnOneList = new ObservableCollection<GiphyImage>();
         private ObservableCollection<GiphyImage> ColumnTwoList = new ObservableCollection<GiphyImage>();
-        private bool IsPrevButtonEnabled = false;
 
         public TrendingPage()
         {
@@ -86,7 +85,7 @@ namespace Gifology
                     });
             }
 
-            this.PreviousAppButton.IsEnabled = IsPrevButtonEnabled = Offset - response.pagination.count > 0;
+            this.PreviousAppButton.IsEnabled = Offset - response.pagination.count > 0;
 
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
