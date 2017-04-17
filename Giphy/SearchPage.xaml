@@ -58,7 +58,8 @@
             </AppBarButton>
             <AppBarButton Name="NextAppButton" 
                           Label="Next" 
-                          Click="NextButton_Click">
+                          Click="NextButton_Click"
+                          IsEnabled="False">
                 <FontIcon HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
                           Glyph="&#xE72A;" />

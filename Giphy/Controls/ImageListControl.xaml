@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
-        <VisualStateManager.VisualStateGroups>
+        <!--<VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Narrow">
                     <VisualState.StateTriggers>
@@ -32,7 +32,7 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+        </VisualStateManager.VisualStateGroups>-->
         
         <Grid Name="SingleImageWrapper" MaxWidth="800" Visibility="Collapsed">
             <Image Name="SingleImage" 
@@ -51,7 +51,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
+            <!--<Grid Grid.Column="0">
                 <Button Name="PreviousButton" 
                     Click="PreviousButton_Click" 
                     Background="Transparent"
@@ -61,7 +61,7 @@
                           Glyph="&#xE760;" 
                           FontSize="25"/>
                 </Button>
-            </Grid>
+            </Grid>-->
 
             <!-- Content -->
             <Grid Name="ContentGrid" Grid.Row="0" Grid.Column="1">
@@ -102,7 +102,7 @@
                 </ScrollViewer>
             </Grid>
 
-            <Grid Grid.Column="2">
+            <!--<Grid Grid.Column="2">
                 <Button Name="NextButton" 
                     Click="NextButton_Click" 
                     Background="Transparent"
@@ -112,7 +112,7 @@
                           Glyph="&#xE761;"
                           FontSize="25"/>
                 </Button>
-            </Grid>
+            </Grid>-->
         </Grid>
     </Grid>
 </UserControl>
