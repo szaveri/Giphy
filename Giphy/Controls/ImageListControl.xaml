@@ -37,7 +37,7 @@
         <Grid Name="SingleImageWrapper" MaxWidth="800" Visibility="Collapsed">
             <Image Name="SingleImage" 
                    Tapped="CloseButton_Click"
-                   Stretch="Fill"
+                   Stretch="Uniform"
                    Opacity="1"/>
         </Grid>
         <Grid Name="ContentWrapper">
