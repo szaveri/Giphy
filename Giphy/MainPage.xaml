@@ -506,21 +506,23 @@
     <Page.BottomAppBar>
         <CommandBar Name="BottomAppBar" 
                     IsOpen="False"
-                    IsSticky="True">
+                    IsSticky="False">
+            <CommandBar.Resources>
+                <Style TargetType="FontIcon">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </CommandBar.Resources>
             <AppBarButton Name="PreviousAppButton" 
                           Label="Previous" 
                           Click="PreviousButton_Click" 
                           IsEnabled="False">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE72B;" />
+                <FontIcon Glyph="&#xE72B;" />
             </AppBarButton>
             <AppBarButton Name="NextAppButton" 
                           Label="Next" 
                           Click="NextButton_Click">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE72A;" />
+                <FontIcon Glyph="&#xE72A;" />
             </AppBarButton>
 
             <!--Image Open-->
@@ -528,34 +530,32 @@
                           Label="Copy URL" 
                           Click="CopyUrlAppButton_Click"
                           Visibility="Collapsed">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE8C8;" />
+                <FontIcon Glyph="&#xE8C8;" />
             </AppBarButton>
             <AppBarButton Name="UnfavoriteAppButton" 
                           Label="Unfavorite" 
                           Click="UnfavoriteAppButton_Click"
                           Visibility="Collapsed">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE8D9;" />
+                <FontIcon Glyph="&#xE8D9;" />
             </AppBarButton>
             <AppBarButton Name="FavoriteAppButton" 
                           Label="Favorite" 
                           Click="FavoriteAppButton_Click"
                           Visibility="Collapsed">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE735;" />
+                <FontIcon Glyph="&#xE735;" />
             </AppBarButton>
             <AppBarButton Name="ShareAppButton" 
                           Label="Share" 
                           Click="ShareAppButton_Click"
                           Visibility="Collapsed">
-                <FontIcon HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Glyph="&#xE72D;" />
+                <FontIcon Glyph="&#xE72D;" />
             </AppBarButton>
+
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Name="FeedbackAppButton"
+                              Label="Send feedback"
+                              Click="FeedbackAppButton_Click"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

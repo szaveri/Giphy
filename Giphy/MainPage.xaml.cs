@@ -41,6 +41,11 @@ namespace Gifology
          */
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported())
+            {
+                this.FeedbackAppButton.Visibility = Visibility.Visible;
+            }
+
             Trending.NextEnabled = true;
 
             switch (await Global.CheckInternetConnection())
@@ -460,5 +465,11 @@ namespace Gifology
         }
 
         #endregion
+
+        private async void FeedbackAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
+        }
     }
 }
