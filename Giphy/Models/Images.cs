@@ -20,6 +20,33 @@ namespace Gifology
         public string Name { get; set; }
         public string Url { get; set; }
 
+        public static string ConvertSourceType(string url, string type)
+        {
+            int lastIndex = url.LastIndexOf('/');
+            string fileName = url.Substring(lastIndex + 1);
+
+            switch (type)
+            {
+                case "gif":
+                    url = url.Replace(fileName, "giphy.gif");
+                    break;
+                case "mp4":
+                    url = url.Replace(fileName, "giphy.mp4");
+                    break;
+                case "fixed_width":
+                    url = url.Replace(fileName, "200w.gif");
+                    break;
+                case "downscale":
+                    url = url.Replace(fileName, "200w_d.gif");
+                    break;
+                default:
+                    url = url.Replace(fileName, "giphy.gif");
+                    break;
+            }
+
+            return url;
+        }
+
         /*
         * Opens context menu on tap or right click (hold)
         */
@@ -105,7 +132,7 @@ namespace Gifology
             if (await ApplicationData.Current.TemporaryFolder.TryGetItemAsync(fileName) == null)
             {
                 var httpClient = new HttpClient();
-                HttpResponseMessage message = await httpClient.GetAsync(((BitmapImage)img.Source).UriSource.OriginalString);
+                HttpResponseMessage message = await httpClient.GetAsync(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "fixed_width"));
                 StorageFolder myfolder = ApplicationData.Current.TemporaryFolder;
                 StorageFile SampleFile = await myfolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
                 byte[] file = await message.Content.ReadAsByteArrayAsync();
@@ -157,7 +184,7 @@ namespace Gifology
         public static void CopyImageUrl(object sender, RoutedEventArgs e, Image img)
         {
             DataPackage dataPackage = new DataPackage();
-            var url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            var url = GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
             dataPackage.RequestedOperation = DataPackageOperation.Copy;
             dataPackage.SetText(url);
             Clipboard.SetContent(dataPackage);
@@ -166,7 +193,7 @@ namespace Gifology
             //Add to Recents database
             var data = new Gifology.Database.Recents();
             data.Giphy_Id = img.Name;
-            data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            data.Url = url;
             GifologyDatabase.InsertUpdateRecent(data);
         }
 
@@ -177,7 +204,7 @@ namespace Gifology
         {
             var data = new Gifology.Database.Favorites();
             data.Giphy_Id = img.Name;
-            data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
+            data.Url = GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
             GifologyDatabase.InsertUpdateFavorite(data);
         }
 

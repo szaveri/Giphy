@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Gifology
@@ -21,12 +22,10 @@ namespace Gifology
     public partial class ImageListControl : UserControl
     {
         #region Properties
-        public delegate void ImageListControlDelegate(object sender, RoutedEventArgs data);
         public static event RoutedEventHandler NextButton_Clicked;
         public static event RoutedEventHandler PrevButton_Clicked;
         public static Action ShowSingleImageIcons = () => { };
         public static Action ShowFullListIcons = () => { };
-        public static Image SelectedImage;
         
         public static readonly DependencyProperty ColumnOneListProperty =
             DependencyProperty.Register("ColumnOneList", typeof(ObservableCollection<GiphyImage>), typeof(ImageListControl), null);
@@ -44,6 +43,15 @@ namespace Gifology
         {
             get { return GetValue(ColumnTwoListProperty) as ObservableCollection<GiphyImage>; }
             set { ColumnTwoListView.ItemsSource = value; }
+        }
+
+        public static readonly DependencyProperty SelectedImageProperty =
+            DependencyProperty.Register("SelectedImage", typeof(ObservableCollection<GiphyImage>), typeof(ImageListControl), null);
+
+        public Image SelectedImage
+        {
+            get { return GetValue(SelectedImageProperty) as Image; }
+            set { SetValue(SelectedImageProperty, value); }
         }
 
         #endregion
@@ -84,7 +92,7 @@ namespace Gifology
         {
             Image img = sender as Image;
             SelectedImage = img;
-            SingleImage.Source = img.Source;
+            SingleImage.Source = new BitmapImage(new Uri(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "fixed_width")));
             SingleImageWrapper.Visibility = Visibility.Visible;
             ContentWrapper.Visibility = Visibility.Collapsed;
 
