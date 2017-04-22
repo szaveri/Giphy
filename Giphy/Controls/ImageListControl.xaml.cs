@@ -85,7 +85,7 @@ namespace Gifology
                 ShowFullListIcons();
 
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            SystemNavigationManager.GetForCurrentView().BackRequested += null;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
         }
 
         private void ImageList_Tapped(object sender, TappedRoutedEventArgs e)
@@ -105,6 +105,7 @@ namespace Gifology
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
+            e.Handled = true;
             CloseButton_Click(null, null);
         }
         #endregion
