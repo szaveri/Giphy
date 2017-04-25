@@ -46,14 +46,13 @@ namespace Gifology
         }
 
         public static readonly DependencyProperty SelectedImageProperty =
-            DependencyProperty.Register("SelectedImage", typeof(ObservableCollection<GiphyImage>), typeof(ImageListControl), null);
+            DependencyProperty.Register("SelectedImage", typeof(Image), typeof(ImageListControl), null);
 
         public Image SelectedImage
         {
             get { return GetValue(SelectedImageProperty) as Image; }
             set { SetValue(SelectedImageProperty, value); }
         }
-
         #endregion
 
         public ImageListControl()
@@ -85,25 +84,25 @@ namespace Gifology
                 ShowFullListIcons();
 
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            SystemNavigationManager.GetForCurrentView().BackRequested -= OnCloseRequest;
         }
 
         private void ImageList_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Image img = sender as Image;
             SelectedImage = img;
-            SingleImage.Source = new BitmapImage(new Uri(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "fixed_width")));
+            SingleImage.Source = new BitmapImage(new Uri(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original")));
             SingleImageWrapper.Visibility = Visibility.Visible;
             ContentWrapper.Visibility = Visibility.Collapsed;
 
             if (ShowSingleImageIcons != null)
                 ShowSingleImageIcons();
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnCloseRequest;
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        private void OnCloseRequest(object sender, BackRequestedEventArgs e)
         {
             e.Handled = true;
             CloseButton_Click(null, null);

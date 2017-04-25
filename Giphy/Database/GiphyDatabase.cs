@@ -66,7 +66,7 @@ namespace Gifology.Database
          */
         public static async Task<List<Favorites>> GetFavorites(int limit)
         {
-            return await aconn.QueryAsync<Favorites>("SELECT * FROM Favorites ORDER BY Timestamp DESC LIMIT ?,?", limit, limit + Global.limit + 1);
+            return await aconn.QueryAsync<Favorites>("SELECT * FROM Favorites GROUP BY Giphy_Id ORDER BY Timestamp DESC LIMIT ?,?", limit, limit + Global.limit + 1);
         }
 
         public static Favorites GetFavorite(string giphy_id)
@@ -76,6 +76,15 @@ namespace Gifology.Database
                 return conn.Table<Favorites>().Where(i => i.Giphy_Id == giphy_id).FirstOrDefault();
 
             }
+        }
+
+        public static async Task<List<Favorites>> GetFavoritesInCategory(int category_id, int limit)
+        {
+            return await aconn.Table<Favorites>().Where(i => i.Category == category_id)
+                .OrderBy(x => x.Timestamp)
+                .Skip(limit)
+                .Take(Global.limit + 1)
+                .ToListAsync();
         }
 
         public static async void InsertUpdateFavorite(Favorites data)
@@ -102,6 +111,18 @@ namespace Gifology.Database
             }
         }
 
+        public static async void DeleteFavoriteId(string giphy_id)
+        {
+            try
+            {
+                await aconn.QueryAsync<int>("DELETE FROM Favorites WHERE Giphy_Id = ?", giphy_id);
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
         /* ==================================
          * END FAVORITE DATABASE FUNCTIONS
          * ==================================
@@ -113,7 +134,12 @@ namespace Gifology.Database
          */
         public static async Task<List<Recents>> GetRecents(int limit)
         {
-            return await aconn.QueryAsync<Recents>("SELECT * FROM Recents ORDER BY Timestamp DESC LIMIT ?,?", limit, limit + Global.limit + 1);
+            //return await aconn.QueryAsync<Recents>("SELECT * FROM Recents ORDER BY Timestamp DESC LIMIT ?,?", limit, limit + Global.limit + 1);
+            return await aconn.Table<Recents>()
+               .OrderByDescending(x => x.Timestamp)
+               .Skip(limit)
+               .Take(Global.limit + 1)
+               .ToListAsync();
         }
 
         public static async void InsertUpdateRecent(Recents data)
@@ -142,6 +168,60 @@ namespace Gifology.Database
 
         /* ==================================
          * END RECENT DATABASE FUNCTIONS
+         * ==================================
+         */
+
+        /* ==================================
+         * START CATEGORY DATABASE FUNCTIONS
+         * ==================================
+         */
+
+        public static async Task<List<Categories>> GetCategories()
+        {
+            return await aconn.Table<Categories>().OrderBy(x => x.Name).ToListAsync();
+        }
+
+        public static async Task<List<Categories>> GetCategoryList()
+        {
+            return await aconn.Table<Categories>().Where(i => i.Name != "Uncategorized").OrderBy(x => x.Name).ToListAsync();
+        }
+
+        public sealed class DistinctCategoryIdResult
+        {
+            public int Category_Id { get; set; }
+        }
+
+        public static async Task<int> GetCategoryId(string Name)
+        {
+            var result = await aconn.QueryAsync<DistinctCategoryIdResult>("SELECT Category FROM Categories WHERE Name = ?", Name);
+            return result.Select(x => x.Category_Id).FirstOrDefault();
+        }
+
+        public sealed class DistinctCategoryResult
+        {
+            public int Category { get; set; }
+        }
+
+        public static async Task<List<int>> GetImageCategory(string giphy_id)
+        {
+            var result = await aconn.QueryAsync<DistinctCategoryResult>("SELECT Category FROM Favorites WHERE Giphy_Id = ? AND Category <> 1", giphy_id);
+            return result.Select(x => x.Category).ToList();
+        }
+
+        public static async void InsertUpdateCategory(Categories data)
+        {
+            try
+            {
+                await aconn.InsertOrReplaceAsync(data);
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
+        /* ==================================
+         * END CATEGORY DATABASE FUNCTIONS
          * ==================================
          */
     }

@@ -18,6 +18,7 @@ namespace Gifology
 {
     public sealed partial class MainPage : Page
     {
+        #region Variables
         private Paging Search = new Paging();
         private Paging Trending = new Paging();
         private Paging MyGifs = new Paging();
@@ -29,6 +30,9 @@ namespace Gifology
             {1, "Trending" },
             {2, "MyGifs" }
         };
+        private static ObservableCollection<CategoryListItem> CategoryList = new ObservableCollection<CategoryListItem>();
+        private static List<Categories> Categories { get; set; } = new List<Categories>();
+        #endregion
 
         public MainPage()
         {
@@ -47,26 +51,43 @@ namespace Gifology
             }
 
             Trending.NextEnabled = true;
-
-            switch (await Global.CheckInternetConnection())
-            {
-                case "Continue":
-                    ImageListControl.NextButton_Clicked += new RoutedEventHandler(NextButton_Click);
-                    ImageListControl.PrevButton_Clicked += new RoutedEventHandler(PreviousButton_Click);
-                    ImageListControl.ShowSingleImageIcons += ShowSingleImageIcons;
-                    ImageListControl.ShowFullListIcons += ShowFullListIcons;
-                    PivotNavigation.SelectedIndex = 0;
-                    break;
-                case "Try Again":
-                    Page_Loaded(sender, e);
-                    break;
-                case "Close":
-                    break;
-            }
+            ImageListControl.NextButton_Clicked += new RoutedEventHandler(NextButton_Click);
+            ImageListControl.PrevButton_Clicked += new RoutedEventHandler(PreviousButton_Click);
+            ImageListControl.ShowSingleImageIcons += ShowSingleImageIcons;
+            ImageListControl.ShowFullListIcons += ShowFullListIcons;
+            PivotNavigation.SelectedIndex = 0;
         }
 
+        #region Navigation Functions
         private async void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            switch (await Global.CheckInternetConnection())
+            {
+                case "None":
+                    WarningMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 162, 54, 54));
+                    WarningText.Text = "No internet detected";
+                    if(WarningMessageGrid.Height == 0)
+                        WarningShow.Begin();
+                    return;
+                    break;
+                case "Metered":
+                    if(Settings.ConnectionDismiss = false)
+                    {
+                        WarningMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 185, 185, 104));
+                        WarningText.Text = "Using metered connection";
+                        WarningDismissButton.Click += new RoutedEventHandler(InternetWarningDismissed);
+                        if(WarningMessageGrid.Height == 0)
+                            WarningShow.Begin();
+                    }
+                    break;
+                case "Wifi":
+                    if (WarningMessageGrid.Height > 0)
+                        WarningHide.Begin();
+                    break;
+                default:
+                    break;
+            }
+
             switch (NavDictionary[PivotNavigation.SelectedIndex])
             {
                 case "Search":
@@ -80,8 +101,12 @@ namespace Gifology
                     this.NextAppButton.IsEnabled = Trending.NextEnabled;
                     break;
                 case "MyGifs":
+                    Categories = await GifologyDatabase.GetCategoryList();
+                    CategoryBox.ItemsSource = Categories;
                     if (ViewBox.SelectedValue == null)
                         ViewBox.SelectedValue = "Favorite";
+                    else if (CategoryBox.SelectedValue == "Category")
+                        CategoryBox.SelectedIndex = 0;
                     this.PreviousAppButton.IsEnabled = MyGifs.PreviousEnabled;
                     this.NextAppButton.IsEnabled = MyGifs.NextEnabled;
                     break;
@@ -92,7 +117,9 @@ namespace Gifology
             else
                 ShowSingleImageIcons();
         }
+        #endregion
 
+        #region Page Functions
         private Image GetSelectedImage()
         {
             switch (NavDictionary[PivotNavigation.SelectedIndex])
@@ -111,6 +138,14 @@ namespace Gifology
                     break;
             }
         }
+
+        private void InternetWarningDismissed(object sender, RoutedEventArgs e)
+        {
+            Settings.ConnectionDismiss = true;
+            WarningHide.Begin();
+            WarningDismissButton.Click -= InternetWarningDismissed;
+        }
+        #endregion
 
         #region Search Functions
         private void GifSearch(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs arg)
@@ -278,6 +313,39 @@ namespace Gifology
             this.PreviousAppButton.IsEnabled = MyGifs.Offset - Global.limit > 0;
         }
 
+        /* ==================================
+         * START CATEGORY FUNCTIONS
+         * ==================================
+         */
+        private async void GetCategory(int Category_Id)
+        {
+            MyGifs.PreviousOffset = MyGifs.Offset;
+            var list = await GifologyDatabase.GetFavoritesInCategory(Category_Id, MyGifs.Offset);
+            MyGifs.Offset += Global.limit;
+
+            this.NextAppButton.IsEnabled = MyGifs.NextEnabled = list.Count > Global.limit;
+            MyGifs.ColumnOneList.Clear();
+            MyGifs.ColumnTwoList.Clear();
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (i % 2 == 0)
+                    MyGifs.ColumnOneList.Add(new GiphyImage
+                    {
+                        Name = list[i].Giphy_Id,
+                        Url = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(list[i].Url, "downscale"), UriKind.Absolute) ? GiphyImage.ConvertSourceType(list[i].Url, "downscale") : GiphyImage.ConvertSourceType(list[i].Url, "fixed_width")
+                    });
+                else
+                    MyGifs.ColumnTwoList.Add(new GiphyImage
+                    {
+                        Name = list[i].Giphy_Id,
+                        Url = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(list[i].Url, "downscale"), UriKind.Absolute) ? GiphyImage.ConvertSourceType(list[i].Url, "downscale") : GiphyImage.ConvertSourceType(list[i].Url, "fixed_width")
+                    });
+            }
+
+            this.PreviousAppButton.IsEnabled = MyGifs.Offset - Global.limit > 0;
+        }
+
+
         private void ViewBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selected = ((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString();
@@ -285,13 +353,34 @@ namespace Gifology
 
             switch (selected)
             {
+                case "Category":
+                    if (CategoryBox.SelectedIndex == -1)
+                        CategoryBox.SelectedIndex = 0;
+                    CategoryBox.Visibility = Visibility.Visible;
+                    break;
                 case "Favorite":
+                    CategoryBox.Visibility = Visibility.Collapsed;
+                    CategoryBox.SelectedIndex = -1;
                     GetFavorites();
                     break;
                 case "Recent":
+                    CategoryBox.Visibility = Visibility.Collapsed;
+                    CategoryBox.SelectedIndex = -1;
                     GetRecents();
                     break;
             }
+        }
+
+        private async void CategoryBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MyGifs.Offset = 0;
+
+            if (CategoryBox.SelectedValue == null)
+            {
+                return;
+            }
+            int? Id = ((Categories)CategoryBox.SelectedValue).Id;
+            GetCategory(Id ?? default(int));
         }
         #endregion
 
@@ -321,6 +410,10 @@ namespace Gifology
                     else MyGifs.Offset -= MyGifs.Offset;
                     switch (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString())
                     {
+                        case "Category":
+                            string Selected = ((ComboBoxItem)CategoryBox.SelectedItem).Tag.ToString();
+                            GetCategory(Int32.Parse(Selected));
+                            break;
                         case "Favorite":
                             GetFavorites();
                             break;
@@ -353,6 +446,7 @@ namespace Gifology
 
                     switch (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString())
                     {
+
                         case "Favorite":
                             GetFavorites();
                             break;
@@ -436,8 +530,7 @@ namespace Gifology
             if (img == null)
                 return;
 
-            PreviousAppButton.Visibility =
-            NextAppButton.Visibility = Visibility.Collapsed;
+            ListCommands.Visibility = Visibility.Collapsed;
 
             if (GifologyDatabase.GetFavorite(img.Name) != null)
             {
@@ -450,26 +543,49 @@ namespace Gifology
                 UnfavoriteAppButton.Visibility = Visibility.Collapsed;
             }
 
-            CopyUrlAppButton.Visibility = ShareAppButton.Visibility = Visibility.Visible;
+            SingleImageCommands.Visibility = Visibility.Visible;
         }
 
         private void ShowFullListIcons()
         {
-            PreviousAppButton.Visibility =
-                NextAppButton.Visibility = Visibility.Visible;
-
-            FavoriteAppButton.Visibility =
-                UnfavoriteAppButton.Visibility =
-                ShareAppButton.Visibility =
-                CopyUrlAppButton.Visibility = Visibility.Collapsed;
+            SingleImageCommands.Visibility = Visibility.Collapsed;
+            ListCommands.Visibility = Visibility.Visible;
         }
-
-        #endregion
 
         private async void FeedbackAppButton_Click(object sender, RoutedEventArgs e)
         {
             var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
             await launcher.LaunchAsync();
         }
+
+        private async void CategoryAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            var img = GetSelectedImage();
+            if (img != null)
+            {
+                CategoryList.Clear();
+                var giphy_id = img.Name;
+
+                var SelectedCategories = await GifologyDatabase.GetImageCategory(giphy_id);
+                var AllCategories = await GifologyDatabase.GetCategoryList();
+
+                for (int i = 0; i < AllCategories.Count; i++)
+                {
+                    CategoryList.Add(new CategoryListItem
+                    {
+                        Id = (int)AllCategories[i].Id,
+                        Name = AllCategories[i].Name,
+                        IsChecked = SelectedCategories.IndexOf((int)AllCategories[i].Id) != -1
+                    });
+                }
+
+                CategoryListControl.SelectedCategories = SelectedCategories;
+                CategoryListControl.SelectedImage = img;
+                CategoryListControl.CategoryList = CategoryList;
+                CategoryListControl.Visibility = Visibility.Visible;
+            }
+        }
+
+        #endregion
     }
 }

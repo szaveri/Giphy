@@ -126,5 +126,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+        <!-- Command Bar Style -->
+        <Style TargetType="CommandBar">
+            <Setter Property="IsOpen" Value="False" />
+            <Setter Property="IsSticky" Value="False" />
+            <Setter Property="Background" Value="#FF1B1B1B"/>
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+
+        <Style x:Key="SecondAppBarButtonStyle" TargetType="AppBarButton">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="MinWidth" Value="68" />
+        </Style>
     </Application.Resources>
 </Application>

@@ -104,11 +104,16 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CategorySelectionControl.xaml.cs">
+      <DependentUpon>CategorySelectionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ImageListControl.xaml.cs">
       <DependentUpon>ImageListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Database\Categories.cs" />
+    <Compile Include="Models\CategoryListItem.cs" />
     <Compile Include="Models\Globals.cs" />
+    <Compile Include="Models\Helpers.cs" />
     <Compile Include="Models\HttpRequests.cs" />
     <Compile Include="Models\Images.cs" />
     <Compile Include="Database\GiphyDatabase.cs" />
@@ -118,6 +123,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TabHeader.xaml.cs">
       <DependentUpon>TabHeader.xaml</DependentUpon>
@@ -183,6 +189,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\CategorySelectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ImageListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
