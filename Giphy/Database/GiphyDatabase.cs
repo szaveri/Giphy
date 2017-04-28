@@ -208,11 +208,63 @@ namespace Gifology.Database
             return result.Select(x => x.Category).ToList();
         }
 
+        public static async void DeleteImageInCategory(Categories data)
+        {
+            if (data.Id == 1)
+                return;
+
+            try
+            {
+                await aconn.ExecuteAsync("DELETE FROM Favorites WHERE Category = ?", data.Id);
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
+        public static async void MoveImageToUncategorized(Categories data)
+        {
+            if (data.Id == 1)
+                return;
+
+            try
+            {
+                await aconn.ExecuteAsync("UPDATE Favorites SET Category = 1 WHERE Category = ?", data.Id);
+                //Delete Duplicates
+                await aconn.QueryAsync<Categories>("DELETE FROM Favorites WHERE Id IN (SELECT Id FROM Favorites GROUP BY Giphy_Id, Category HAVING COUNT(1) > 1)");
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
         public static async void InsertUpdateCategory(Categories data)
         {
+            //Cannot update Uncategorized
+            if (data.Id == 1)
+                return;
+
             try
             {
                 await aconn.InsertOrReplaceAsync(data);
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
+        public static async void DeleteCategories(Categories data)
+        {
+            //Cannot delete Uncategorized
+            if (data.Id == 1)
+                return;
+
+            try
+            {
+                await aconn.DeleteAsync(data);
             }
             catch (SQLiteException e)
             {

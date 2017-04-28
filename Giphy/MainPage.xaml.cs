@@ -13,12 +13,16 @@ using System.Threading.Tasks;
 using Gifology.Database;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
+using Gifology.Controls;
 
 namespace Gifology
 {
     public sealed partial class MainPage : Page
     {
         #region Variables
+        private NotificationControl NoInternetConnection = null;
+        private NotificationControl MeteredNotification = null;
+
         private Paging Search = new Paging();
         private Paging Trending = new Paging();
         private Paging MyGifs = new Paging();
@@ -64,25 +68,27 @@ namespace Gifology
             switch (await Global.CheckInternetConnection())
             {
                 case "None":
-                    WarningMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 162, 54, 54));
-                    WarningText.Text = "No internet detected";
-                    if(WarningMessageGrid.Height == 0)
-                        WarningShow.Begin();
+                    if(NoInternetConnection == null)
+                    {
+                        NoInternetConnection = this.Notifications.CreateNotification("NoInternetNotification", "No internet connection", "Error", false);                        
+                    }
+                    NoInternetConnection.ShowNotification();
                     return;
                     break;
                 case "Metered":
-                    if(Settings.ConnectionDismiss = false)
+                    if(Settings.ConnectionDismiss == false)
                     {
-                        WarningMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 185, 185, 104));
-                        WarningText.Text = "Using metered connection";
-                        WarningDismissButton.Click += new RoutedEventHandler(InternetWarningDismissed);
-                        if(WarningMessageGrid.Height == 0)
-                            WarningShow.Begin();
+                        if(MeteredNotification == null)
+                            MeteredNotification = this.Notifications.CreateNotification("NeteredNotification", "On metered connection");
+                        MeteredNotification.ShowNotification();
                     }
                     break;
                 case "Wifi":
-                    if (WarningMessageGrid.Height > 0)
-                        WarningHide.Begin();
+                    Settings.ConnectionDismiss = false;
+                    if (NoInternetConnection != null && NoInternetConnection.Height > 0)
+                        NoInternetConnection.DestroyNotification();
+                    if (MeteredNotification != null && MeteredNotification.Height > 0)
+                        MeteredNotification.DestroyNotification();
                     break;
                 default:
                     break;
@@ -101,11 +107,11 @@ namespace Gifology
                     this.NextAppButton.IsEnabled = Trending.NextEnabled;
                     break;
                 case "MyGifs":
-                    Categories = await GifologyDatabase.GetCategoryList();
+                    Categories = await GifologyDatabase.GetCategories();
                     CategoryBox.ItemsSource = Categories;
                     if (ViewBox.SelectedValue == null)
                         ViewBox.SelectedValue = "Favorite";
-                    else if (CategoryBox.SelectedValue == "Category")
+                    else if (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString() == "Category")
                         CategoryBox.SelectedIndex = 0;
                     this.PreviousAppButton.IsEnabled = MyGifs.PreviousEnabled;
                     this.NextAppButton.IsEnabled = MyGifs.NextEnabled;
@@ -137,13 +143,6 @@ namespace Gifology
                     return null;
                     break;
             }
-        }
-
-        private void InternetWarningDismissed(object sender, RoutedEventArgs e)
-        {
-            Settings.ConnectionDismiss = true;
-            WarningHide.Begin();
-            WarningDismissButton.Click -= InternetWarningDismissed;
         }
         #endregion
 
@@ -350,6 +349,8 @@ namespace Gifology
         {
             var selected = ((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString();
             MyGifs.Offset = 0;
+            EditCategoryAppButton.Visibility = Visibility.Collapsed;
+            DeleteCategoryAppButton.Visibility = Visibility.Collapsed;
 
             switch (selected)
             {
@@ -357,6 +358,11 @@ namespace Gifology
                     if (CategoryBox.SelectedIndex == -1)
                         CategoryBox.SelectedIndex = 0;
                     CategoryBox.Visibility = Visibility.Visible;
+                    if(((Categories)CategoryBox.SelectedValue).Id != 1)
+                    {
+                        EditCategoryAppButton.Visibility = Visibility.Visible;
+                        DeleteCategoryAppButton.Visibility = Visibility.Visible;
+                    }
                     break;
                 case "Favorite":
                     CategoryBox.Visibility = Visibility.Collapsed;
@@ -464,7 +470,12 @@ namespace Gifology
         {
             var img = GetSelectedImage();
             if(img != null)
+            {
                 GiphyImage.CopyImageUrl(sender, e, img);
+                var SuccessNotification = Notifications.CreateNotification("SuccessNotification", "URL Copied", "Success", false);
+                SuccessNotification.ShowHideNotification(true);
+            }
+                
         }
 
         private void FavoriteAppButton_Click(object sender, RoutedEventArgs e)
@@ -479,6 +490,9 @@ namespace Gifology
                     GiphyImage.FavoriteImage(sender, e, img);
                     FavoriteAppButton.Visibility = Visibility.Collapsed;
                     UnfavoriteAppButton.Visibility = Visibility.Visible;
+
+                    var SuccessNotification = Notifications.CreateNotification("SuccessNotification", "Image Favorited", "Success", false);
+                    SuccessNotification.ShowHideNotification(true);
                 }
                 catch (SQLite.SQLiteException ex)
                 {
@@ -501,6 +515,9 @@ namespace Gifology
                 {
                     var item = GifologyDatabase.GetFavorite(img.Name);
                     GiphyImage.UnfavoriteImage(sender, e, item);
+
+                    var SuccessNotification = Notifications.CreateNotification("SuccessNotification", "Image Unfavorited", "Success", false);
+                    SuccessNotification.ShowHideNotification(true);
                     FavoriteAppButton.Visibility = Visibility.Visible;
                     UnfavoriteAppButton.Visibility = Visibility.Collapsed;
                 }
@@ -584,6 +601,70 @@ namespace Gifology
                 CategoryListControl.CategoryList = CategoryList;
                 CategoryListControl.Visibility = Visibility.Visible;
             }
+        }
+
+        private async void EditCategoryAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            var CurrentCategory = (Categories)CategoryBox.SelectedValue;
+
+            TextBox inputTextBox = new TextBox();
+            inputTextBox.Text = CurrentCategory.Name;
+            inputTextBox.AcceptsReturn = false;
+            inputTextBox.Height = 32;
+            ContentDialog dialog = new ContentDialog();
+            dialog.Content = inputTextBox;
+            dialog.Title = "Edit Category";
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = "Update";
+            dialog.SecondaryButtonText = "Cancel";
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                if (inputTextBox.Text.Trim() != "")
+                {
+                    CurrentCategory.Name = inputTextBox.Text;
+                    GifologyDatabase.InsertUpdateCategory(CurrentCategory);
+
+                    Categories = await GifologyDatabase.GetCategories();
+                    CategoryBox.ItemsSource = Categories;
+                    CategoryBox.SelectedValue = CurrentCategory;
+                }
+            }
+        }
+
+        private async void DeleteCategoryAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            var CurrentCategory = (Categories)CategoryBox.SelectedValue;
+            NotificationControl SuccessNotification;
+
+            DeleteCategoryDialog dialog = new DeleteCategoryDialog();
+            await dialog.ShowAsync();
+
+            switch (dialog.Result)
+            {
+                case Results.Delete:
+                    //Remove all favorites in category
+                    GifologyDatabase.DeleteImageInCategory(CurrentCategory);
+                    GifologyDatabase.DeleteCategories(CurrentCategory);
+                    SuccessNotification = Notifications.CreateNotification("SuccessNotification", "Category Deleted", "Success", false);
+                    SuccessNotification.ShowHideNotification(true);
+                    break;
+                case Results.Keep:
+                    //Don't delete favorites
+                    GifologyDatabase.MoveImageToUncategorized(CurrentCategory);
+                    GifologyDatabase.DeleteCategories(CurrentCategory);
+                    SuccessNotification = Notifications.CreateNotification("SuccessNotification", "Category Deleted", "Success", false);
+                    SuccessNotification.ShowHideNotification(true);
+                    break;
+                case Results.Cancel:
+                    return;
+                    break;
+                default:
+                    break;
+            }
+
+            Categories = await GifologyDatabase.GetCategories();
+            CategoryBox.ItemsSource = Categories;
+            CategoryBox.SelectedIndex = 0;
         }
 
         #endregion

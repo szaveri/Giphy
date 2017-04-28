@@ -237,7 +237,6 @@
 
     <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -254,134 +253,14 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-
-        <Grid Name="WarningMessageGrid" 
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Top"
-              Background="#FF1B1B1B"
-              BorderBrush="#FFA23636"
-              BorderThickness="5,0,0,0"
-              Height="0"
-              Visibility="Collapsed"
-              Grid.Row="0">
-            <Grid.Resources>
-                <Storyboard x:Name="WarningShow">
-                    <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="WarningMessageGrid">
-                        <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="25"/>
-                    </DoubleAnimationUsingKeyFrames>
-                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageGrid">
-                        <DiscreteObjectKeyFrame KeyTime="0">
-                            <DiscreteObjectKeyFrame.Value>
-                                <Visibility>Visible</Visibility>
-                            </DiscreteObjectKeyFrame.Value>
-                        </DiscreteObjectKeyFrame>
-                    </ObjectAnimationUsingKeyFrames>
-                </Storyboard>
-                <Storyboard x:Name="WarningHide">
-                    <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="WarningMessageGrid">
-                        <EasingDoubleKeyFrame KeyTime="0" Value="25"/>
-                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
-                    </DoubleAnimationUsingKeyFrames>
-                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageGrid">
-                        <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
-                            <DiscreteObjectKeyFrame.Value>
-                                <Visibility>Collapsed</Visibility>
-                            </DiscreteObjectKeyFrame.Value>
-                        </DiscreteObjectKeyFrame>
-                    </ObjectAnimationUsingKeyFrames>
-                </Storyboard>
-            </Grid.Resources>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Name="WarningText" 
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Stretch"
-                       Margin="10,0,0,0"
-                       Grid.Column="0"/>
-            <Button Name="WarningDismissButton" Grid.Column="1">
-                <Button.Resources>
-                    <Style TargetType="Button">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="CommonStates">
-                                                <VisualState x:Name="Normal">
-                                                    <Storyboard>
-                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="PointerOver">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Pressed">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Disabled">
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}"/>
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Resources>
-                <FontIcon Glyph="&#xE10A;"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          FontSize="11"/>
-            </Button>
-        </Grid>
-
-        <Grid Name="WrapperGrid" Margin="10" Grid.Row="1">
+        
+        <Grid Name="WrapperGrid" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Grid Name="CopyrightGrid" Grid.Row="0" Margin="0,0,0,1">
+            <Grid Name="CopyrightGrid" Grid.Row="0" Margin="10">
                 <TextBlock x:Name="poweredBy" 
                                Text="Powered by Giphy" 
                                VerticalAlignment="Bottom" HorizontalAlignment="Right" 
@@ -390,7 +269,9 @@
                                FontSize="10"/>
             </Grid>
 
-            <Grid Grid.Row="1">
+            <Grid Name="Notifications" Grid.Row="0" />
+
+                <Grid Grid.Row="1"  Margin="10">
                 <Pivot x:Name="PivotNavigation" SelectionChanged="Pivot_NavSelectionChanged">
                     <Pivot.Resources>
                         <Style TargetType="PivotHeaderItem">
@@ -661,7 +542,7 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <CommandBar Name="ListCommands">
                 <CommandBar.Resources>
                     <Style TargetType="FontIcon">
@@ -669,6 +550,20 @@
                         <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                 </CommandBar.Resources>
+                <!-- Category Commands -->
+                <AppBarButton Name="EditCategoryAppButton" 
+                              Label="Edit" 
+                              Click="EditCategoryAppButton_Click"
+                              Visibility="Collapsed">
+                    <FontIcon Glyph="&#xE70F;" />
+                </AppBarButton>
+                <AppBarButton Name="DeleteCategoryAppButton" 
+                              Label="Delete" 
+                              Click="DeleteCategoryAppButton_Click"
+                              Visibility="Collapsed">
+                    <FontIcon Glyph="&#xE74D;" />
+                </AppBarButton>
+                
                 <AppBarButton Name="PreviousAppButton" 
                               Label="Previous" 
                               Click="PreviousButton_Click" 

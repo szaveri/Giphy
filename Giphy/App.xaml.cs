@@ -85,6 +85,7 @@ namespace Gifology
                 ApplicationView.PreferredLaunchViewSize = new Size(1280, 720);
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(720, 500));
                 // Ensure the current window is active
+                ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 Window.Current.Activate();
             }
         }
