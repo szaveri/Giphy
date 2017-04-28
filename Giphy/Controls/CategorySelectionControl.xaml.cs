@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Gifology.Database;
 
-namespace Gifology
+namespace Gifology.Controls
 {
     public sealed partial class CategorySelectionControl : UserControl
     {

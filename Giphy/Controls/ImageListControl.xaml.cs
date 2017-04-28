@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Gifology
+namespace Gifology.Controls
 {
     public partial class ImageListControl : UserControl
     {

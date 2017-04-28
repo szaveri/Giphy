@@ -667,6 +667,10 @@ namespace Gifology
             CategoryBox.SelectedIndex = 0;
         }
 
+        private void SettingAppButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.rootFrame.Navigate(typeof(Settings), PivotNavigation.SelectedIndex); 
+        }
         #endregion
     }
 }

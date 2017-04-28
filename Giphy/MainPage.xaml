@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Gifology"
+    xmlns:local="using:Gifology.Controls"
     xmlns:data="using:Gifology.Database"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
@@ -580,8 +580,11 @@
                     <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
                                       Name="FeedbackAppButton"
                                       Label="Send feedback"
-                                      Icon="Library"
                                       Click="FeedbackAppButton_Click"/>
+                    <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
+                                      Name="SettingAppButton"
+                                      Label="Settings"
+                                      Click="SettingAppButton_Click"/>
                 </CommandBar.SecondaryCommands>
             </CommandBar>
 
