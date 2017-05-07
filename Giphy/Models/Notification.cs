@@ -10,7 +10,7 @@ namespace Gifology
 {
     public static class Notification
     {
-        public static NotificationControl CreateNotification(this Grid Grid, string Name, string Text, string Type = "Warning", bool Dismissable = true)
+        public static NotificationControl CreateNotification(this Grid Grid, string Name, string Text, string Type = "Success", bool Dismissable = true)
         {
             NotificationControl notification = new NotificationControl();
 

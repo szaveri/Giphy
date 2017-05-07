@@ -90,7 +90,6 @@
                    Margin="10,0,0,0"
                    Grid.Column="0"/>
         <Button Name="NotificationDismissButton" 
-                Visibility="{Binding Dismissable, Converter={StaticResource BoolToVisibilityConverter}}"
                 Click="DestroyNotification"
                 Grid.Column="1">
             <Button.Resources>
@@ -160,7 +159,7 @@
             <FontIcon Glyph="&#xE10A;"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
-                          FontSize="11"/>
+                          FontSize="13"/>
         </Button>
     </Grid>
 </UserControl>

@@ -43,7 +43,10 @@ namespace Gifology.Controls
         public bool? Dismissable
         {
             get { return GetValue(DismissableProperty) as bool?; }
-            set { SetValue(DismissableProperty, value); }
+            set {
+                if (value != null && value == true) NotificationDismissButton.Visibility = Visibility.Visible;
+                else NotificationDismissButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         public static readonly DependencyProperty TypeProperty =
@@ -51,15 +54,17 @@ namespace Gifology.Controls
 
         public string Type
         {
-            get { return GetValue(DismissableProperty) as string; }
+            get { return GetValue(TypeProperty) as string; }
             set
             {
-                if (value == "Notification")
-                    _this.NotificationMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 185, 185, 104));
+                if (value == "Success")
+                    _this.NotificationMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 51, 204, 0));
                 else if (value == "Error")
                     _this.NotificationMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 162, 54, 54));
+                else if (value == "Warning")
+                    _this.NotificationMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 185, 185, 104));
                 else
-                    _this.NotificationMessageGrid.BorderBrush = new SolidColorBrush(Color.FromArgb(100, 0, 110, 10));
+                    _this.NotificationMessageGrid.BorderBrush = _this.NotificationMessageGrid.Background;
             }
         }
 

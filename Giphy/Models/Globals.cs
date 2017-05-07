@@ -19,8 +19,9 @@ namespace Gifology
         public static int limit = 20;
         public static string shareFileName = "blank";
         public static string databaseFile = Path.Combine(Windows.Storage.ApplicationData.Current.RoamingFolder.Path, "giphy.db");
+        public static string settingsFile = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "settings.db");
 
-        public static async Task<string> CheckInternetConnection()
+        public static string CheckInternetConnection()
         {
             bool isInternetConnected = NetworkInterface.GetIsNetworkAvailable();
 

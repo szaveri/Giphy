@@ -28,8 +28,6 @@ namespace Gifology
     /// </summary>
     sealed partial class App : Application
     {
-        public static Frame rootFrame;
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -38,6 +36,8 @@ namespace Gifology
         {
             this.InitializeComponent();
             GifologyDatabase.CreateDatabase();
+            GifologyDatabase.CreateSettingsDatabase();
+            GifologyDatabase.GetSettings();
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Gifology
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
-            rootFrame = Window.Current.Content as Frame;
+            Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -86,8 +86,10 @@ namespace Gifology
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
                 ApplicationView.PreferredLaunchViewSize = new Size(1280, 720);
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(720, 500));
+                #if WINDOWS_PHONE_APP
+                        ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
+                #endif
                 // Ensure the current window is active
-                ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 Window.Current.Activate();
             }
         }

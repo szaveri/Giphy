@@ -14,12 +14,41 @@ using Gifology.Database;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
 using Gifology.Controls;
+using System.ComponentModel;
 
 namespace Gifology
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
         #region Variables
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isImageSelected;
+        public bool IsImageSelected
+        {
+            get { return _isImageSelected; }
+            set { _isImageSelected = value;
+                OnPropertyChanged("IsImageSelected");
+            }
+        }
+
+        private bool _isFavorited;
+        public bool IsFavorited
+        {
+            get { return _isFavorited; }
+            set
+            {
+                _isFavorited = value;
+                OnPropertyChanged("IsFavorited");
+            }
+        }
+
+        private bool ConnectionDismiss = false;
         private NotificationControl NoInternetConnection = null;
         private NotificationControl MeteredNotification = null;
 
@@ -41,6 +70,7 @@ namespace Gifology
         public MainPage()
         {
             this.InitializeComponent();
+            this.DataContext = this;
             GiphyImage.RegisterForShare();
         }
 
@@ -65,34 +95,10 @@ namespace Gifology
         #region Navigation Functions
         private async void Pivot_NavSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (await Global.CheckInternetConnection())
-            {
-                case "None":
-                    if(NoInternetConnection == null)
-                    {
-                        NoInternetConnection = this.Notifications.CreateNotification("NoInternetNotification", "No internet connection", "Error", false);                        
-                    }
-                    NoInternetConnection.ShowNotification();
-                    return;
-                    break;
-                case "Metered":
-                    if(Settings.ConnectionDismiss == false)
-                    {
-                        if(MeteredNotification == null)
-                            MeteredNotification = this.Notifications.CreateNotification("NeteredNotification", "On metered connection");
-                        MeteredNotification.ShowNotification();
-                    }
-                    break;
-                case "Wifi":
-                    Settings.ConnectionDismiss = false;
-                    if (NoInternetConnection != null && NoInternetConnection.Height > 0)
-                        NoInternetConnection.DestroyNotification();
-                    if (MeteredNotification != null && MeteredNotification.Height > 0)
-                        MeteredNotification.DestroyNotification();
-                    break;
-                default:
-                    break;
-            }
+            EditCategoryAppButton.Visibility = Visibility.Collapsed;
+            DeleteCategoryAppButton.Visibility = Visibility.Collapsed;
+
+            if (!InternetStatus()) return;
 
             switch (NavDictionary[PivotNavigation.SelectedIndex])
             {
@@ -112,7 +118,11 @@ namespace Gifology
                     if (ViewBox.SelectedValue == null)
                         ViewBox.SelectedValue = "Favorite";
                     else if (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString() == "Category")
+                    {
                         CategoryBox.SelectedIndex = 0;
+                        EditCategoryAppButton.Visibility = Visibility.Visible;
+                        DeleteCategoryAppButton.Visibility = Visibility.Visible;
+                    }
                     this.PreviousAppButton.IsEnabled = MyGifs.PreviousEnabled;
                     this.NextAppButton.IsEnabled = MyGifs.NextEnabled;
                     break;
@@ -392,8 +402,10 @@ namespace Gifology
 
         #region Button Functions
 
-        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        private async void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!InternetStatus()) return;
+
             this.ProgressBar.Visibility = Visibility.Visible;
 
             switch (NavDictionary[PivotNavigation.SelectedIndex])
@@ -433,8 +445,10 @@ namespace Gifology
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!InternetStatus()) return;
+
             this.ProgressBar.Visibility = Visibility.Visible;
 
             switch (NavDictionary[PivotNavigation.SelectedIndex])
@@ -547,26 +561,21 @@ namespace Gifology
             if (img == null)
                 return;
 
-            ListCommands.Visibility = Visibility.Collapsed;
-
             if (GifologyDatabase.GetFavorite(img.Name) != null)
             {
-                FavoriteAppButton.Visibility = Visibility.Collapsed;
-                UnfavoriteAppButton.Visibility = Visibility.Visible;
+                IsFavorited = true;
             }
             else
             {
-                FavoriteAppButton.Visibility = Visibility.Visible;
-                UnfavoriteAppButton.Visibility = Visibility.Collapsed;
+                IsFavorited = false;
             }
 
-            SingleImageCommands.Visibility = Visibility.Visible;
+            IsImageSelected = true;
         }
 
         private void ShowFullListIcons()
         {
-            SingleImageCommands.Visibility = Visibility.Collapsed;
-            ListCommands.Visibility = Visibility.Visible;
+            IsImageSelected = false;
         }
 
         private async void FeedbackAppButton_Click(object sender, RoutedEventArgs e)
@@ -669,8 +678,42 @@ namespace Gifology
 
         private void SettingAppButton_Click(object sender, RoutedEventArgs e)
         {
-            App.rootFrame.Navigate(typeof(Settings), PivotNavigation.SelectedIndex); 
+            MainFrame.Navigate(typeof(SettingsPage), PivotNavigation.SelectedIndex); 
         }
         #endregion
+
+        private bool InternetStatus()
+        {
+            switch (Global.CheckInternetConnection())
+            {
+                case "None":
+                    if (NoInternetConnection == null)
+                        NoInternetConnection = this.Notifications.CreateNotification("NoInternetNotification", "No internet connection", "Error", false);
+                    if (NoInternetConnection != null && NoInternetConnection.Height == 0)
+                        NoInternetConnection.ShowNotification();
+                    return false;
+                    break;
+                case "Metered":
+                    if (ConnectionDismiss == false)
+                    {
+                        if (MeteredNotification == null)
+                            MeteredNotification = this.Notifications.CreateNotification("MeteredNotification", "On metered connection", "Warning");
+                        if (MeteredNotification != null && MeteredNotification.Height == 0)
+                            MeteredNotification.ShowNotification();
+                    }
+                    break;
+                case "Wifi":
+                    ConnectionDismiss = false;
+                    if (NoInternetConnection != null && NoInternetConnection.Height > 0)
+                        NoInternetConnection.DestroyNotification();
+                    if (MeteredNotification != null && MeteredNotification.Height > 0)
+                        MeteredNotification.DestroyNotification();
+                    break;
+                default:
+                    break;
+            }
+
+            return true;
+        }
     }
 }

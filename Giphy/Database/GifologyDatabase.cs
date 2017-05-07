@@ -10,6 +10,7 @@ namespace Gifology.Database
     public class GifologyDatabase
     {
         private static SQLiteAsyncConnection aconn = new SQLiteAsyncConnection(Global.databaseFile);
+        private static SQLiteAsyncConnection saconn = new SQLiteAsyncConnection(Global.settingsFile);
 
         public GifologyDatabase()
         {
@@ -40,6 +41,37 @@ namespace Gifology.Database
                         conn.CreateTable<Favorites>();
                     if (!IfTableExists(conn, "Recents"))
                         conn.CreateTable<Recents>();
+
+                    conn.Commit();
+                }
+                catch (SQLiteException e)
+                {
+                    Debug.WriteLine("DB EXCEPTION: " + e.Message);
+                    conn.Rollback();
+                }
+            }
+
+        }
+
+        public static void CreateSettingsDatabase()
+        {
+            using (var conn = new SQLiteConnection(Global.settingsFile))
+            {
+                try
+                {
+                    conn.BeginTransaction();
+
+                    if (!IfTableExists(conn, "Settings"))
+                        conn.CreateTable<Settings>();
+
+                    if (conn.Table<Settings>().Where(x => x.Id == 1).Count() == 0)
+                    {
+                        var setting = new Settings();
+                        setting.Id = 1;
+                        setting.InfiniteScroll = 0;
+                        setting.GifQuality = "Medium";
+                        conn.Insert(setting);
+                    }
 
                     conn.Commit();
                 }
@@ -274,6 +306,47 @@ namespace Gifology.Database
 
         /* ==================================
          * END CATEGORY DATABASE FUNCTIONS
+         * ==================================
+         */
+
+        /* ==================================
+         * START SETTINGS DATABASE FUNCTIONS
+         * ==================================
+         */
+        public static async void GetSettings()
+        {
+            try
+            {
+                await saconn.Table<Settings>().FirstOrDefaultAsync().ContinueWith(t =>
+                {
+                    var settings = t.Result;
+                    SettingsItem.InfiniteScroll = settings.InfiniteScroll;
+                    SettingsItem.GifQuality = settings.GifQuality;
+                });
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+
+        public static async void InsertUpdateSettings()
+        {
+            try
+            {
+                var data = new Settings();
+                data.Id = 1;
+                data.InfiniteScroll = SettingsItem.InfiniteScroll;
+                data.GifQuality = SettingsItem.GifQuality;
+                await saconn.InsertOrReplaceAsync(data);
+            }
+            catch (SQLiteException e)
+            {
+                Debug.WriteLine("DB EXCEPTION: " + e.Message);
+            }
+        }
+        /* ==================================
+         * END SETTINGS DATABASE FUNCTIONS
          * ==================================
          */
     }
