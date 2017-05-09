@@ -22,6 +22,7 @@ namespace Gifology.Controls
     public sealed partial class CategorySelectionControl : UserControl
     {
         private CategorySelectionControl _this;
+        public static Action LoadCategoryList = () => { };
         public static readonly DependencyProperty SelectedImageProperty =
             DependencyProperty.Register("SelectedImage", typeof(Image), typeof(CategorySelectionControl), null);
 
@@ -107,6 +108,8 @@ namespace Gifology.Controls
                     });
 
                     ReloadCategories();
+                    if (LoadCategoryList != null)
+                        LoadCategoryList();
                 }
             }
         }
@@ -115,11 +118,11 @@ namespace Gifology.Controls
         {
             try
             {
-                GifologyDatabase.DeleteFavoriteId(SelectedImage.Name);
                 if (SelectedCategories.Count == 0)
                 {
                     if (GifologyDatabase.GetFavorite(SelectedImage.Name) != null)
                     {
+                        GifologyDatabase.DeleteFavoriteId(SelectedImage.Name);
                         Favorites data = new Favorites
                         {
                             Giphy_Id = SelectedImage.Name,
@@ -132,6 +135,7 @@ namespace Gifology.Controls
                 }
                 else
                 {
+                    GifologyDatabase.DeleteFavoriteId(SelectedImage.Name);
                     for (int i = 0; i < SelectedCategories.Count; i++)
                     {
                         Favorites data = new Favorites

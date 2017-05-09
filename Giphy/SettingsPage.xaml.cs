@@ -15,11 +15,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Gifology.Database;
+using Windows.System;
+using Windows.UI.Core;
 
 namespace Gifology
 {
     public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     {
+        #region Variables
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {
@@ -31,6 +34,12 @@ namespace Gifology
             "Low",
             "Medium",
             "High"
+        };
+
+        public List<string> Pages { get; set; } = new List<string>{
+            "Search",
+            "Trending",
+            "MyGifs"
         };
 
         public int InfiniteScrollEnabled
@@ -54,10 +63,59 @@ namespace Gifology
             }
         }
 
+        public string SelectedPageStart
+        {
+            get { return SettingsItem.StartPage; }
+            set
+            {
+                SettingsItem.StartPage = value;
+                GifologyDatabase.InsertUpdateSettings();
+                OnPropertyChanged("SelectedPageStart");
+            }
+        }
+        #endregion
+
         public SettingsPage()
         {
             this.InitializeComponent();
             this.DataContext = this;
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported())
+            {
+                this.GiveFeedBack.Visibility = Visibility.Visible;
+            }
+            
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                Frame.CanGoBack ?
+                AppViewBackButtonVisibility.Visible :
+                AppViewBackButtonVisibility.Collapsed;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+        }
+
+        private async void GiveFeedBack_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
+        }
+
+        private async void RateAndReview_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", Windows.ApplicationModel.Package.Current.Id.FamilyName)));
+        }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+                e.Handled = true;
+                SystemNavigationManager.GetForCurrentView().BackRequested -= OnBackRequested;
+            }
+        }
+       
     }
 }

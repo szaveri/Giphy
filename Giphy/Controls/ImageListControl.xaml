@@ -67,9 +67,10 @@
             <!-- Content -->
             <Grid Name="ContentGrid" Grid.Row="0" Grid.Column="1">
                 <ScrollViewer Name="sv" 
-                          HorizontalScrollBarVisibility="Disabled"
-                          VerticalScrollBarVisibility="Auto"
-                              IsHorizontalScrollChainingEnabled="True">
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto"
+                              IsHorizontalScrollChainingEnabled="True"
+                              ViewChanged="OnScrollViewerViewChanged">
                     <Grid HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

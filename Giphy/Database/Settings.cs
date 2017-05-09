@@ -12,6 +12,8 @@ namespace Gifology.Database
         public int InfiniteScroll { get; set; } = 0;
         [Unique, NotNull]
         public string GifQuality { get; set; } = "Medium";
+        [Unique, NotNull]
+        public string StartPage { get; set; } = "Search";
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 }

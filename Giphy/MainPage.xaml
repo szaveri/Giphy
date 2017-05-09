@@ -237,148 +237,147 @@
         </Style>
     </Page.Resources>
 
-    <Frame Name="MainFrame">
-        <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+    <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Medium">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="WrapperGrid.Margin" Value="20,10,20,10" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid Name="WrapperGrid" Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Medium">
-                        <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="720" />
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="WrapperGrid.Margin" Value="20,10,20,10" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-
-            <Grid Name="WrapperGrid" Grid.Row="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid Name="CopyrightGrid" Grid.Row="0" Margin="10">
-                    <TextBlock x:Name="poweredBy" 
+            <Grid Name="CopyrightGrid" Grid.Row="0" Margin="10">
+                <TextBlock x:Name="poweredBy" 
                                Text="Powered by Giphy" 
                                VerticalAlignment="Bottom" HorizontalAlignment="Right" 
                                TextWrapping="NoWrap" 
                                Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
                                FontSize="10"/>
-                </Grid>
+            </Grid>
 
-                <Grid Name="Notifications" Grid.Row="0" />
+            <Grid Name="Notifications" Grid.Row="0" />
 
-                <Grid Grid.Row="1"  Margin="10">
-                    <Pivot x:Name="PivotNavigation" SelectionChanged="Pivot_NavSelectionChanged">
-                        <Pivot.Resources>
-                            <Style TargetType="PivotHeaderItem">
-                                <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}" />
-                                <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
-                                <Setter Property="FontWeight" Value="{ThemeResource PivotHeaderItemThemeFontWeight}" />
-                                <Setter Property="CharacterSpacing" Value="{ThemeResource PivotHeaderItemCharacterSpacing}" />
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="Foreground" Value="Gray" />
-                                <Setter Property="Padding" Value="{ThemeResource PivotHeaderItemMargin}" />
-                                <Setter Property="Height" Value="Auto" />
-                                <Setter Property="VerticalContentAlignment" Value="Center" />
-                                <Setter Property="IsTabStop" Value="False" />
-                                <Setter Property="RequestedTheme" Value="Dark" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="PivotHeaderItem">
-                                            <Grid 
+            <Grid Grid.Row="1"  Margin="10">
+                <Pivot x:Name="PivotNavigation" SelectionChanged="Pivot_NavSelectionChanged">
+                    <Pivot.Resources>
+                        <Style TargetType="PivotHeaderItem">
+                            <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}" />
+                            <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
+                            <Setter Property="FontWeight" Value="{ThemeResource PivotHeaderItemThemeFontWeight}" />
+                            <Setter Property="CharacterSpacing" Value="{ThemeResource PivotHeaderItemCharacterSpacing}" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="Gray" />
+                            <Setter Property="Padding" Value="{ThemeResource PivotHeaderItemMargin}" />
+                            <Setter Property="Height" Value="Auto" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="IsTabStop" Value="False" />
+                            <Setter Property="RequestedTheme" Value="Dark" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="PivotHeaderItem">
+                                        <Grid 
                             x:Name="Grid"
                             Background="{TemplateBinding Background}">
-                                                <Grid.Resources>
-                                                    <Style x:Key="BaseContentPresenterStyle" TargetType="ContentPresenter">
-                                                        <Setter Property="FontFamily" Value="Segoe UI"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                                        <Setter Property="FontSize" Value="15"/>
-                                                        <Setter Property="TextWrapping" Value="Wrap"/>
-                                                        <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
-                                                        <Setter Property="TextLineBounds" Value="Full"/>
-                                                        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings"/>
-                                                    </Style>
-                                                    <Style x:Key="BodyContentPresenterStyle" TargetType="ContentPresenter" BasedOn="{StaticResource BaseContentPresenterStyle}">
-                                                        <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
-                                                        <Setter Property="FontWeight" Value="{ThemeResource PivotHeaderItemThemeFontWeight}"/>
-                                                        <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}"/>
-                                                    </Style>
-                                                </Grid.Resources>
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="SelectionStates">
-                                                        <VisualStateGroup.Transitions>
-                                                            <VisualTransition From="Unselected" To="UnselectedLocked" GeneratedDuration="0:0:0.33" />
-                                                            <VisualTransition From="UnselectedLocked" To="Unselected" GeneratedDuration="0:0:0.33" />
-                                                        </VisualStateGroup.Transitions>
-                                                        <VisualState x:Name="Disabled">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                            <Grid.Resources>
+                                                <Style x:Key="BaseContentPresenterStyle" TargetType="ContentPresenter">
+                                                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="FontSize" Value="15"/>
+                                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                                    <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+                                                    <Setter Property="TextLineBounds" Value="Full"/>
+                                                    <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings"/>
+                                                </Style>
+                                                <Style x:Key="BodyContentPresenterStyle" TargetType="ContentPresenter" BasedOn="{StaticResource BaseContentPresenterStyle}">
+                                                    <Setter Property="FontFamily" Value="{ThemeResource PivotHeaderItemFontFamily}" />
+                                                    <Setter Property="FontWeight" Value="{ThemeResource PivotHeaderItemThemeFontWeight}"/>
+                                                    <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}"/>
+                                                </Style>
+                                            </Grid.Resources>
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="SelectionStates">
+                                                    <VisualStateGroup.Transitions>
+                                                        <VisualTransition From="Unselected" To="UnselectedLocked" GeneratedDuration="0:0:0.33" />
+                                                        <VisualTransition From="UnselectedLocked" To="Unselected" GeneratedDuration="0:0:0.33" />
+                                                    </VisualStateGroup.Transitions>
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Unselected" />
-                                                        <VisualState x:Name="UnselectedLocked">
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetName="ContentPresenterTranslateTransform"
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Unselected" />
+                                                    <VisualState x:Name="UnselectedLocked">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="ContentPresenterTranslateTransform"
                                                              Storyboard.TargetProperty="X"
                                                              Duration="0" To="{ThemeResource PivotHeaderItemLockedTranslation}" />
-                                                                <DoubleAnimation Storyboard.TargetName="ContentPresenter"
+                                                            <DoubleAnimation Storyboard.TargetName="ContentPresenter"
                                                              Storyboard.TargetProperty="(UIElement.Opacity)"
                                                              Duration="0" To="0" />
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Selected">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Selected">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="UnselectedPointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="UnselectedPointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="SelectedPointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="SelectedPointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                             Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="UnselectedPressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="UnselectedPressed">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="SelectedPressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="SelectedPressed">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground" >
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <ContentPresenter
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -388,116 +387,116 @@
                                 FontWeight="{TemplateBinding FontWeight}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                                    <ContentPresenter.RenderTransform>
-                                                        <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
-                                                    </ContentPresenter.RenderTransform>
-                                                </ContentPresenter>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Pivot.Resources>
-                        <Pivot.Style>
-                            <StaticResource ResourceKey="PivotStyleDynamicHeader"/>
-                        </Pivot.Style>
-                        <PivotItem>
-                            <PivotItem.Header>
-                                <local:TabHeader Label="Search" Glyph="&#xE721;" />
-                            </PivotItem.Header>
-                            <PivotItem.Content>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
+                                                <ContentPresenter.RenderTransform>
+                                                    <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
+                                                </ContentPresenter.RenderTransform>
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Pivot.Resources>
+                    <Pivot.Style>
+                        <StaticResource ResourceKey="PivotStyleDynamicHeader"/>
+                    </Pivot.Style>
+                    <PivotItem>
+                        <PivotItem.Header>
+                            <local:TabHeader Label="Search" Glyph="&#xE721;" />
+                        </PivotItem.Header>
+                        <PivotItem.Content>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                                    <!-- Header -->
-                                    <Grid Grid.Row="0" Margin="0,0,0,10">
-                                        <AutoSuggestBox Name="SearchGif" 
+                                <!-- Header -->
+                                <Grid Grid.Row="0" Margin="0,0,0,10">
+                                    <AutoSuggestBox Name="SearchGif" 
                                                     PlaceholderText="Search GIFs"
                                                     QueryIcon="Find"
                                                     HorizontalAlignment="Stretch"
                                                     QuerySubmitted="GifSearch"/>
-                                    </Grid>
-                                    <!-- Content -->
-                                    <Grid Grid.Row="1">
-                                        <local:ImageListControl x:Name="SearchILC" ColumnOneList="{x:Bind Search.ColumnOneList}" ColumnTwoList="{x:Bind Search.ColumnTwoList}" />
+                                </Grid>
+                                <!-- Content -->
+                                <Grid Grid.Row="1">
+                                    <local:ImageListControl x:Name="SearchILC" ColumnOneList="{x:Bind Search.ColumnOneList}" ColumnTwoList="{x:Bind Search.ColumnTwoList}" />
 
-                                        <TextBlock x:Name="NoSearchText" 
+                                    <TextBlock x:Name="NoSearchText" 
                                                    FontFamily="Segoe UI"
                                                    TextWrapping="Wrap" 
                                                    Text="Start searching for that perfect GIF!" 
                                                    TextAlignment="Center"
                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                                    Padding="20"/>
-                                    </Grid>
                                 </Grid>
-                            </PivotItem.Content>
-                        </PivotItem>
+                            </Grid>
+                        </PivotItem.Content>
+                    </PivotItem>
 
-                        <PivotItem>
-                            <PivotItem.Header>
-                                <local:TabHeader Label="Trending" Glyph="&#xE945;" />
-                            </PivotItem.Header>
-                            <PivotItem.Content>
-                                <Grid>
-                                    <local:ImageListControl x:Name="TrendingILC" ColumnOneList="{x:Bind Trending.ColumnOneList}" ColumnTwoList="{x:Bind Trending.ColumnTwoList}" />
-                                </Grid>
-                            </PivotItem.Content>
-                        </PivotItem>
+                    <PivotItem>
+                        <PivotItem.Header>
+                            <local:TabHeader Label="Trending" Glyph="&#xE945;" />
+                        </PivotItem.Header>
+                        <PivotItem.Content>
+                            <Grid>
+                                <local:ImageListControl x:Name="TrendingILC" ColumnOneList="{x:Bind Trending.ColumnOneList}" ColumnTwoList="{x:Bind Trending.ColumnTwoList}" />
+                            </Grid>
+                        </PivotItem.Content>
+                    </PivotItem>
 
-                        <PivotItem>
-                            <PivotItem.Header>
-                                <local:TabHeader Label="My GIFs" Glyph="&#xE735;" />
-                            </PivotItem.Header>
-                            <PivotItem.Content>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="50" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
+                    <PivotItem>
+                        <PivotItem.Header>
+                            <local:TabHeader Label="My GIFs" Glyph="&#xE735;" />
+                        </PivotItem.Header>
+                        <PivotItem.Content>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                                    <!-- Header -->
-                                    <Grid Grid.Row="0">
-                                        <RelativePanel>
-                                            <ComboBox Name="ViewBox" 
+                                <!-- Header -->
+                                <Grid Grid.Row="0">
+                                    <RelativePanel>
+                                        <ComboBox Name="ViewBox" 
                                                   SelectionChanged="ViewBox_SelectionChanged" 
                                                   AllowDrop="True" 
                                                   SelectedValuePath="Tag" 
                                                   Margin="0,0,10,10" 
                                                   Height="40"
                                                   Style="{StaticResource BorderlessComboBox}">
-                                                <ComboBoxItem Tag="Category">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <FontIcon HorizontalAlignment="Center" 
+                                            <ComboBoxItem Tag="Category">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon HorizontalAlignment="Center" 
                                                               VerticalAlignment="Center"
                                                               Glyph="&#xE82D;" 
                                                               Margin="0,0,5,0"/>
-                                                        <TextBlock Text="Categories" />
-                                                    </StackPanel>
-                                                </ComboBoxItem>
-                                                <ComboBoxItem Tag="Favorite">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <FontIcon HorizontalAlignment="Center" 
+                                                    <TextBlock Text="Categories" />
+                                                </StackPanel>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem Tag="Favorite">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon HorizontalAlignment="Center" 
                                                               VerticalAlignment="Center"
                                                               Glyph="&#xE734;" 
                                                               Margin="0,0,5,0"/>
-                                                        <TextBlock Text="Favorites" />
-                                                    </StackPanel>
-                                                </ComboBoxItem>
-                                                <ComboBoxItem Tag="Recent">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <FontIcon HorizontalAlignment="Center" 
+                                                    <TextBlock Text="Favorites" />
+                                                </StackPanel>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem Tag="Recent">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon HorizontalAlignment="Center" 
                                                               VerticalAlignment="Center"
                                                               Glyph="&#xE823;" 
                                                               Margin="0,0,5,0"/>
-                                                        <TextBlock Text="Recent"/>
-                                                    </StackPanel>
-                                                </ComboBoxItem>
-                                            </ComboBox>
+                                                    <TextBlock Text="Recent"/>
+                                                </StackPanel>
+                                            </ComboBoxItem>
+                                        </ComboBox>
 
-                                            <ComboBox Name="CategoryBox"
+                                        <ComboBox Name="CategoryBox"
                                                   SelectionChanged="CategoryBox_SelectionChanged" 
                                                   AllowDrop="True" 
                                                   Margin="0,0,0,10" 
@@ -505,130 +504,127 @@
                                                   Visibility="Collapsed"
                                                   RelativePanel.RightOf="ViewBox"
                                                   Style="{StaticResource BorderlessComboBox}">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate x:DataType="data:Categories">
-                                                        <TextBlock Text="{Binding Name}" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox>
-                                        </RelativePanel>
-                                    </Grid>
-
-                                    <!-- Content -->
-                                    <Grid Grid.Row="1">
-                                        <local:ImageListControl x:Name="MyGifILC" ColumnOneList="{x:Bind MyGifs.ColumnOneList}" ColumnTwoList="{x:Bind MyGifs.ColumnTwoList}" Grid.Row="1"/>
-                                    </Grid>
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate x:DataType="data:Categories">
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </RelativePanel>
                                 </Grid>
-                            </PivotItem.Content>
-                        </PivotItem>
-                    </Pivot>
 
-                    <ProgressBar Name="ProgressBar"
+                                <!-- Content -->
+                                <Grid Grid.Row="1">
+                                    <local:ImageListControl x:Name="MyGifILC" ColumnOneList="{x:Bind MyGifs.ColumnOneList}" ColumnTwoList="{x:Bind MyGifs.ColumnTwoList}" Grid.Row="1"/>
+                                </Grid>
+                            </Grid>
+                        </PivotItem.Content>
+                    </PivotItem>
+                </Pivot>
+
+                <ProgressBar Name="ProgressBar"
                                  IsIndeterminate="True"
                                  Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                                  Visibility="Collapsed"
                                  Width="400" />
 
-                    <ProgressRing Name="ProgressRing"
+                <ProgressRing Name="ProgressRing"
                                   IsActive="True"
                                   Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" 
                                   Visibility="Collapsed"
                                   Height="100"
                                   Width="100"/>
 
-                    <local:CategorySelectionControl x:Name="CategoryListControl" 
+                <local:CategorySelectionControl x:Name="CategoryListControl" 
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 MaxHeight="400"
                                                 MaxWidth="350"
                                                 Visibility="Collapsed"/>
-                </Grid>
             </Grid>
+        </Grid>
 
-            <Grid Grid.Row="1">
-                <CommandBar Name="ListCommands"
+        <Grid Grid.Row="1">
+            <CommandBar Name="ListCommands"
                             Visibility="{Binding IsImageSelected, Converter={StaticResource BoolToVis}, ConverterParameter=false}">
-                    <CommandBar.Resources>
-                        <Style TargetType="FontIcon">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </CommandBar.Resources>
-                    <!-- Category Commands -->
-                    <AppBarButton Name="EditCategoryAppButton" 
+                <CommandBar.Resources>
+                    <Style TargetType="FontIcon">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </CommandBar.Resources>
+                <!-- Category Commands -->
+                <AppBarButton Name="EditCategoryAppButton" 
                               Label="Edit" 
                               Click="EditCategoryAppButton_Click"
                               Visibility="Collapsed">
-                        <FontIcon Glyph="&#xE70F;" />
-                    </AppBarButton>
-                    <AppBarButton Name="DeleteCategoryAppButton" 
+                    <FontIcon Glyph="&#xE70F;" />
+                </AppBarButton>
+                <AppBarButton Name="DeleteCategoryAppButton" 
                               Label="Delete" 
                               Click="DeleteCategoryAppButton_Click"
                               Visibility="Collapsed">
-                        <FontIcon Glyph="&#xE74D;" />
-                    </AppBarButton>
+                    <FontIcon Glyph="&#xE74D;" />
+                </AppBarButton>
 
-                    <AppBarButton Name="PreviousAppButton" 
+                <AppBarButton Name="PreviousAppButton" 
                               Label="Previous" 
                               Click="PreviousButton_Click" 
-                              IsEnabled="False">
-                        <FontIcon Glyph="&#xE72B;" />
-                    </AppBarButton>
-                    <AppBarButton Name="NextAppButton" 
+                              IsEnabled="False"
+                              Visibility="{Binding IsInfiniteScroll, Converter={StaticResource BoolToVis}, ConverterParameter=false, Mode=OneWay}">
+                    <FontIcon Glyph="&#xE72B;" />
+                </AppBarButton>
+                <AppBarButton Name="NextAppButton" 
                               Label="Next" 
-                              Click="NextButton_Click">
-                        <FontIcon Glyph="&#xE72A;" />
-                    </AppBarButton>
+                              Click="NextButton_Click"
+                              Visibility="{Binding IsInfiniteScroll, Converter={StaticResource BoolToVis}, ConverterParameter=false, Mode=OneWay}">
+                    <FontIcon Glyph="&#xE72A;" />
+                </AppBarButton>
 
-                    <CommandBar.SecondaryCommands>
-                        <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
-                                      Name="FeedbackAppButton"
-                                      Label="Send feedback"
-                                      Click="FeedbackAppButton_Click"/>
-                        <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
                                       Name="SettingAppButton"
                                       Label="Settings"
                                       Click="SettingAppButton_Click"/>
-                    </CommandBar.SecondaryCommands>
-                </CommandBar>
+                </CommandBar.SecondaryCommands>
+            </CommandBar>
 
-                <CommandBar Name="SingleImageCommands"
+            <CommandBar Name="SingleImageCommands"
                             Visibility="{Binding IsImageSelected, Converter={StaticResource BoolToVis}}">
-                    <CommandBar.Resources>
-                        <Style TargetType="FontIcon">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </CommandBar.Resources>
-                    <AppBarButton Name="CategoryAppButton" 
+                <CommandBar.Resources>
+                    <Style TargetType="FontIcon">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </CommandBar.Resources>
+                <AppBarButton Name="CategoryAppButton" 
                                    Label="Add to Category" 
                                   Click="CategoryAppButton_Click">
-                        <FontIcon Glyph="&#xE82E;" />
-                    </AppBarButton>
-                    <AppBarButton Name="CopyUrlAppButton" 
+                    <FontIcon Glyph="&#xE82E;" />
+                </AppBarButton>
+                <AppBarButton Name="CopyUrlAppButton" 
                               Label="Copy URL" 
                               Click="CopyUrlAppButton_Click">
-                        <FontIcon Glyph="&#xE8C8;" />
-                    </AppBarButton>
-                    <AppBarButton Name="UnfavoriteAppButton" 
+                    <FontIcon Glyph="&#xE8C8;" />
+                </AppBarButton>
+                <AppBarButton Name="UnfavoriteAppButton" 
                                   Label="Unfavorite" 
                                   Click="UnfavoriteAppButton_Click"
                                   Visibility="{Binding IsFavorited, Converter={StaticResource BoolToVis}}">
-                        <FontIcon Glyph="&#xE8D9;" />
-                    </AppBarButton>
-                    <AppBarButton Name="FavoriteAppButton" 
+                    <FontIcon Glyph="&#xE8D9;" />
+                </AppBarButton>
+                <AppBarButton Name="FavoriteAppButton" 
                                   Label="Favorite" 
                                   Click="FavoriteAppButton_Click"
                                   Visibility="{Binding IsFavorited, Converter={StaticResource BoolToVis}, ConverterParameter=false}">
-                        <FontIcon Glyph="&#xE735;" />
-                    </AppBarButton>
-                    <AppBarButton Name="ShareAppButton" 
+                    <FontIcon Glyph="&#xE735;" />
+                </AppBarButton>
+                <AppBarButton Name="ShareAppButton" 
                                   Label="Share" 
                                   Click="ShareAppButton_Click">
-                        <FontIcon Glyph="&#xE72D;" />
-                    </AppBarButton>
-                </CommandBar>
-            </Grid>
+                    <FontIcon Glyph="&#xE72D;" />
+                </AppBarButton>
+            </CommandBar>
         </Grid>
-    </Frame>
+    </Grid>
 </Page>

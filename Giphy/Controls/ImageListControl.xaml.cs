@@ -26,7 +26,7 @@ namespace Gifology.Controls
         public static event RoutedEventHandler PrevButton_Clicked;
         public static Action ShowSingleImageIcons = () => { };
         public static Action ShowFullListIcons = () => { };
-        
+
         public static readonly DependencyProperty ColumnOneListProperty =
             DependencyProperty.Register("ColumnOneList", typeof(ObservableCollection<GiphyImage>), typeof(ImageListControl), null);
 
@@ -61,6 +61,22 @@ namespace Gifology.Controls
         }
 
         #region Functions
+        private void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (SettingsItem.InfiniteScroll == 0)
+                return;
+
+            var verticalOffset = sv.VerticalOffset;
+            var maxVerticalOffset = sv.ScrollableHeight;
+
+            if (maxVerticalOffset < 0 ||
+                verticalOffset == maxVerticalOffset)
+            {
+                // Scrolled to bottom
+                NextButton_Click(null, null);
+            }
+        }
+
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (NextButton_Clicked != null)
@@ -91,7 +107,11 @@ namespace Gifology.Controls
         {
             Image img = sender as Image;
             SelectedImage = img;
-            SingleImage.Source = new BitmapImage(new Uri(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original")));
+
+            var OriginalUrl = ((BitmapImage)img.Source).UriSource.OriginalString;
+            SingleImage.Source = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality), UriKind.Absolute) ? 
+                new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality))) : 
+                new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, "High")));
             SingleImageWrapper.Visibility = Visibility.Visible;
             ContentWrapper.Visibility = Visibility.Collapsed;
 

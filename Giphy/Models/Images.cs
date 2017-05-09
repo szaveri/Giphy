@@ -39,6 +39,15 @@ namespace Gifology
                 case "downscale":
                     url = url.Replace(fileName, "200w_d.gif");
                     break;
+                case "High":
+                    url = url.Replace(fileName, "giphy.gif");
+                    break;
+                case "Medium":
+                    url = url.Replace(fileName, "200w.gif");
+                    break;
+                case "Low":
+                    url = url.Replace(fileName, "200w_d.gif");
+                    break;
                 default:
                     url = url.Replace(fileName, "giphy.gif");
                     break;
@@ -132,7 +141,13 @@ namespace Gifology
             if (await ApplicationData.Current.TemporaryFolder.TryGetItemAsync(fileName) == null)
             {
                 var httpClient = new HttpClient();
-                HttpResponseMessage message = await httpClient.GetAsync(GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "fixed_width"));
+
+                var OriginalUrl = ((BitmapImage)img.Source).UriSource.OriginalString;
+                var RequestUri = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality), UriKind.Absolute) ?
+                    new Uri(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality)) :
+                    new Uri(GiphyImage.ConvertSourceType(OriginalUrl, "High"));
+
+                HttpResponseMessage message = await httpClient.GetAsync(RequestUri);
                 StorageFolder myfolder = ApplicationData.Current.TemporaryFolder;
                 StorageFile SampleFile = await myfolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
                 byte[] file = await message.Content.ReadAsByteArrayAsync();

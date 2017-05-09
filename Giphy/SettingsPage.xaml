@@ -6,10 +6,18 @@
     xmlns:converter="using:Gifology.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <converter:IntToBoolConverter x:Key="IntToBool"/>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+        </Style>
+        <Style x:Key="Hyperlink" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+        </Style>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" MaxWidth="800">
@@ -22,46 +30,60 @@
                        FontSize="28"
                        Padding="10"
                        Grid.Row="0"/>
-        <Grid Grid.Row="1" Padding="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
-                <RowDefinition Height="80" />
-            </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      Grid.Row="1" 
+                      Padding="10">
+            <RelativePanel>
+                <TextBlock x:Name="AppSection"
+                           Text="Content"
+                           Style="{StaticResource SectionTitle}" />
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                <ToggleSwitch x:Name="InfiniteScroll" 
+                              Header="Infinite Scrolling"
+                              Margin="0,0,0,15"
+                              IsOn="{Binding InfiniteScrollEnabled, Converter={StaticResource IntToBool}, Mode=TwoWay}"
+                              RelativePanel.Below="AppSection"/>
+                
+                <ComboBox x:Name="GifQuality"
+                          Header="GIF Sharing Quality"
+                          ItemsSource="{Binding Qualities, Mode=OneWay}"
+                          SelectedValue="{Binding SelectedQuality, Mode=TwoWay}"
+                          Margin="0,0,0,15"
+                          Width="180"
+                          RelativePanel.Below="InfiniteScroll"/>
+                
+                <ComboBox x:Name="StartingPage"
+                          Header="Starting Page"
+                          ItemsSource="{Binding Pages, Mode=OneWay}"
+                          SelectedValue="{Binding SelectedPageStart, Mode=TwoWay}"
+                          Margin="0,0,0,15"
+                          Width="180"
+                          RelativePanel.Below="GifQuality"/>
 
-            <TextBlock x:Name="InfiniteScrollText" 
-                       TextWrapping="Wrap" 
-                       Text="Infinite Scrolling" 
-                       HorizontalAlignment="Left" 
-                       VerticalAlignment="Center"
-                       Grid.Row="0"
-                       Grid.Column="0"/>
-            <TextBlock x:Name="GifQualityText" 
-                       TextWrapping="Wrap" 
-                       Text="GIF Quality" 
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Grid.Row="1"
-                       Grid.Column="0"/>
-            
-            <ToggleSwitch x:Name="InfiniteScroll" 
-                          HorizontalAlignment="Left" 
-                          VerticalAlignment="Center"
-                          Grid.Row="0"
-                          Grid.Column="1"
-                          IsOn="{Binding InfiniteScrollEnabled, Converter={StaticResource IntToBool}, Mode=TwoWay}"/>
-            <ComboBox x:Name="GifQuality"
-                      ItemsSource="{Binding Qualities, Mode=OneWay}"
-                      SelectedValue="{Binding SelectedQuality, Mode=TwoWay}"
-                      HorizontalAlignment="Left" 
-                      VerticalAlignment="Center" 
-                      Width="150"
-                      Grid.Row="1"
-                      Grid.Column="1"/>
-        </Grid>
+                <TextBlock x:Name="AboutSection"
+                           Text="About"
+                           Style="{StaticResource SectionTitle}" 
+                           RelativePanel.Below="StartingPage"/>
+
+                <TextBlock x:Name="Version"
+                           Text="1.5.4" 
+                           Margin="0,0,0,10"
+                           RelativePanel.Below="AboutSection"/>
+
+                <TextBlock x:Name="RateAndReview"
+                           Text="Rate and Review"
+                           Style="{StaticResource Hyperlink}"
+                           Margin="0,0,0,10"
+                           Tapped="RateAndReview_Tapped"
+                           RelativePanel.Below="Version"/>
+
+                <TextBlock x:Name="GiveFeedBack"
+                           Text="Give Feedback"
+                           Style="{StaticResource Hyperlink}"
+                           Tapped="GiveFeedBack_Tapped"
+                           RelativePanel.Below="RateAndReview"/>
+            </RelativePanel>
+        </ScrollViewer>
     </Grid>
 </Page>

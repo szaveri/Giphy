@@ -70,6 +70,7 @@ namespace Gifology.Database
                         setting.Id = 1;
                         setting.InfiniteScroll = 0;
                         setting.GifQuality = "Medium";
+                        setting.StartPage = "Search";
                         conn.Insert(setting);
                     }
 
@@ -322,6 +323,7 @@ namespace Gifology.Database
                     var settings = t.Result;
                     SettingsItem.InfiniteScroll = settings.InfiniteScroll;
                     SettingsItem.GifQuality = settings.GifQuality;
+                    SettingsItem.StartPage = settings.StartPage;
                 });
             }
             catch (SQLiteException e)
@@ -338,6 +340,7 @@ namespace Gifology.Database
                 data.Id = 1;
                 data.InfiniteScroll = SettingsItem.InfiniteScroll;
                 data.GifQuality = SettingsItem.GifQuality;
+                data.StartPage = SettingsItem.StartPage;
                 await saconn.InsertOrReplaceAsync(data);
             }
             catch (SQLiteException e)
