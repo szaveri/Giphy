@@ -27,6 +27,7 @@ namespace Gifology
         public static void DestroyNotification(this NotificationControl Notification)
         {
             Notification.DestroyNotification(null, null);
+            Notification = null;
         }
     }
 }

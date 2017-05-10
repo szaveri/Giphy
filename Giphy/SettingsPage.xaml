@@ -67,7 +67,7 @@
                            RelativePanel.Below="StartingPage"/>
 
                 <TextBlock x:Name="Version"
-                           Text="1.5.4" 
+                           Text="{Binding VersionNumber}" 
                            Margin="0,0,0,10"
                            RelativePanel.Below="AboutSection"/>
 

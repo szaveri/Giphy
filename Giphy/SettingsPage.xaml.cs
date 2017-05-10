@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using Gifology.Database;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.ApplicationModel;
 
 namespace Gifology
 {
@@ -41,6 +42,8 @@ namespace Gifology
             "Trending",
             "MyGifs"
         };
+
+        public string VersionNumber { get; set; } = GetAppVersion();
 
         public int InfiniteScrollEnabled
         {
@@ -105,6 +108,17 @@ namespace Gifology
         private async void RateAndReview_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", Windows.ApplicationModel.Package.Current.Id.FamilyName)));
+        }
+
+        public static string GetAppVersion()
+        {
+
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+
+            return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e)

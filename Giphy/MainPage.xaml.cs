@@ -706,26 +706,30 @@ namespace Gifology
             switch (Global.CheckInternetConnection())
             {
                 case "None":
+                    if (MeteredNotification != null && MeteredNotification.GetHeight() > 0)
+                        MeteredNotification.DestroyNotification();
                     if (NoInternetConnection == null)
                         NoInternetConnection = this.Notifications.CreateNotification("NoInternetNotification", "No internet connection", "Error", false);
-                    if (NoInternetConnection != null && NoInternetConnection.Height == 0)
+                    if (NoInternetConnection != null && NoInternetConnection.GetHeight() == 0)
                         NoInternetConnection.ShowNotification();
                     return false;
                     break;
                 case "Metered":
+                    if (NoInternetConnection != null && NoInternetConnection.GetHeight() > 0)
+                        NoInternetConnection.DestroyNotification();
                     if (ConnectionDismiss == false)
                     {
                         if (MeteredNotification == null)
                             MeteredNotification = this.Notifications.CreateNotification("MeteredNotification", "On metered connection", "Warning");
-                        if (MeteredNotification != null && MeteredNotification.Height == 0)
+                        if (MeteredNotification != null && MeteredNotification.GetHeight() == 0)
                             MeteredNotification.ShowNotification();
                     }
                     break;
                 case "Wifi":
                     ConnectionDismiss = false;
-                    if (NoInternetConnection != null && NoInternetConnection.Height > 0)
+                    if (NoInternetConnection != null && NoInternetConnection.GetHeight() > 0)
                         NoInternetConnection.DestroyNotification();
-                    if (MeteredNotification != null && MeteredNotification.Height > 0)
+                    if (MeteredNotification != null && MeteredNotification.GetHeight() > 0)
                         MeteredNotification.DestroyNotification();
                     break;
                 default:
