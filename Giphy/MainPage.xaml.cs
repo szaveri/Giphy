@@ -39,17 +39,6 @@ namespace Gifology
             }
         }
 
-        private bool _isFavorited;
-        public bool IsFavorited
-        {
-            get { return _isFavorited; }
-            set
-            {
-                _isFavorited = value;
-                OnPropertyChanged("IsFavorited");
-            }
-        }
-
         private bool _isInfiniteScroll;
         public bool IsInfiniteScroll
         {
@@ -747,11 +736,13 @@ namespace Gifology
 
             if (GifologyDatabase.GetFavorite(img.Name) != null)
             {
-                IsFavorited = true;
+                UnfavoriteAppButton.Visibility = Visibility.Visible;
+                FavoriteAppButton.Visibility = Visibility.Collapsed;
             }
             else
             {
-                IsFavorited = false;
+                UnfavoriteAppButton.Visibility = Visibility.Collapsed;
+                FavoriteAppButton.Visibility = Visibility.Visible;
             }
 
             IsImageSelected = true;
