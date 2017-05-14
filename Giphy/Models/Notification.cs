@@ -18,8 +18,24 @@ namespace Gifology
             notification.Text = Text;
             notification.Type = Type;
             notification.Dismissable = Dismissable;
+            notification.ParentType = "Grid";
 
             Grid.Children.Add(notification);
+
+            return notification;
+        }
+
+        public static NotificationControl CreateNotification(this StackPanel StackPanel, string Name, string Text, string Type = "Success", bool Dismissable = true)
+        {
+            NotificationControl notification = new NotificationControl();
+
+            notification.Name = Name;
+            notification.Text = Text;
+            notification.Type = Type;
+            notification.Dismissable = Dismissable;
+            notification.ParentType = "StackPanel";
+
+            StackPanel.Children.Add(notification);
 
             return notification;
         }

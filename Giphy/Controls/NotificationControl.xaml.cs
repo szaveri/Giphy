@@ -67,6 +67,16 @@ namespace Gifology.Controls
             }
         }
 
+        public static readonly DependencyProperty ParentTypeProperty =
+             DependencyProperty.Register("ParentType", typeof(string), typeof(NotificationControl), null);
+
+        public string ParentType
+        {
+            get { return GetValue(ParentTypeProperty) as string; }
+            set { SetValue(ParentTypeProperty, value); }
+            }
+
+
         public NotificationControl()
         {
             this.InitializeComponent();
@@ -104,12 +114,18 @@ namespace Gifology.Controls
                 this.NotificationHide.Begin();
                 this.NotificationHide.Completed += (s, args) =>
                 {
-                    ((Grid)this.Parent).Children.Remove(this);
+                    if(this.ParentType == "StackPanel")
+                        ((StackPanel)this.Parent).Children.Remove(this);
+                    else
+                        ((Grid)this.Parent).Children.Remove(this);
                 };
             }
             else
             {
-                ((Grid)this.Parent).Children.Remove(this);
+                if (this.ParentType == "StackPanel")
+                    ((StackPanel)this.Parent).Children.Remove(this);
+                else
+                    ((Grid)this.Parent).Children.Remove(this);
             }
            
         }
