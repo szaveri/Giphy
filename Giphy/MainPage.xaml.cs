@@ -125,8 +125,19 @@ namespace Gifology
                 case "MyGifs":
                     Categories = await GifologyDatabase.GetCategories();
                     CategoryBox.ItemsSource = Categories;
+
                     if (ViewBox.SelectedValue == null)
                         ViewBox.SelectedValue = "Favorite";
+                    else if (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString() == "Favorite")
+                    {
+                        MyGifs.Offset = MyGifs.PreviousOffset;
+                        GetFavorites();
+                    }
+                    else if (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString() == "Recent")
+                    {
+                        MyGifs.Offset = MyGifs.PreviousOffset;
+                        GetRecents();
+                    }
                     else if (((ComboBoxItem)ViewBox.SelectedItem).Tag.ToString() == "Category")
                     {
                         CategoryBox.SelectedIndex = 0;
@@ -136,6 +147,7 @@ namespace Gifology
                             DeleteCategoryAppButton.Visibility = Visibility.Visible;
                         }
                     }
+
                     this.PreviousAppButton.IsEnabled = MyGifs.PreviousEnabled;
                     this.NextAppButton.IsEnabled = MyGifs.NextEnabled;
                     break;
