@@ -274,13 +274,13 @@ namespace Gifology
                     Trending.ColumnOneList.Add(new GiphyImage
                     {
                         Name = list[i].id,
-                        Url = list[i].images.fixed_width_downsampled != null ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
+                        Url = list[i].images.fixed_width_downsampled != null  && list[i].images.fixed_width_downsampled.url != "" ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
                     });
                 else
                     Trending.ColumnTwoList.Add(new GiphyImage
                     {
                         Name = list[i].id,
-                        Url = list[i].images.fixed_width_downsampled != null ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
+                        Url = list[i].images.fixed_width_downsampled != null && list[i].images.fixed_width_downsampled.url != "" ? list[i].images.fixed_width_downsampled.url : list[i].images.fixed_width.url
                     });
             }
 
