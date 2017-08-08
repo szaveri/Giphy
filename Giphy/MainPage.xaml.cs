@@ -24,7 +24,7 @@ namespace Gifology
     {
         #region Variables
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -79,7 +79,7 @@ namespace Gifology
         /*
          * Runs check for user's internet connection on app load 
          */
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Trending.NextEnabled = true;
             IsInfiniteScroll = SettingsItem.InfiniteScroll == 1 ? true : false;
@@ -167,16 +167,12 @@ namespace Gifology
             {
                 case "Search":
                     return SearchILC.SelectedImage;
-                    break;
                 case "Trending":
                     return TrendingILC.SelectedImage;
-                    break;
                 case "MyGifs":
                     return MyGifILC.SelectedImage;
-                    break;
                 default:
                     return null;
-                    break;
             }
         }
         #endregion
@@ -427,7 +423,7 @@ namespace Gifology
             }
         }
 
-        private async void CategoryBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CategoryBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MyGifs.Offset = 0;
             MyGifs.ColumnOneList.Clear();
@@ -455,7 +451,7 @@ namespace Gifology
 
         #region Button Functions
 
-        private async void PreviousButton_Click(object sender, RoutedEventArgs e)
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
             if (!InternetStatus()) return;
 
@@ -498,7 +494,7 @@ namespace Gifology
             this.ProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private async void NextButton_Click(object sender, RoutedEventArgs e)
+        private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (!InternetStatus()) return;
 
@@ -688,7 +684,6 @@ namespace Gifology
                     break;
                 case Results.Cancel:
                     return;
-                    break;
                 default:
                     break;
             }
@@ -714,7 +709,6 @@ namespace Gifology
                     if (NoInternetConnection != null && NoInternetConnection.GetHeight() == 0)
                         NoInternetConnection.ShowNotification();
                     return false;
-                    break;
                 case "Metered":
                     if (NoInternetConnection != null && NoInternetConnection.GetHeight() > 0)
                         NoInternetConnection.DestroyNotification();

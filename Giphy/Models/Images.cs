@@ -19,6 +19,7 @@ namespace Gifology
     {
         public string Name { get; set; }
         public string Url { get; set; }
+        public int AutoPlayEnabled { get; set; } = SettingsItem.AutoPlay;
 
         public static string ConvertSourceType(string url, string type)
         {

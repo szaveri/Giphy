@@ -339,6 +339,7 @@ namespace Gifology.Database
                 var data = new Settings();
                 data.Id = 1;
                 data.InfiniteScroll = SettingsItem.InfiniteScroll;
+                data.AutoPlay = SettingsItem.AutoPlay;
                 data.GifQuality = SettingsItem.GifQuality;
                 data.StartPage = SettingsItem.StartPage;
                 await saconn.InsertOrReplaceAsync(data);

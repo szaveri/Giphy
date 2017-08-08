@@ -18,13 +18,13 @@ namespace Gifology.Controls
 {
     public sealed partial class NotificationControl : UserControl
     {
-        public static readonly DependencyProperty NameProperty =
+        public static readonly DependencyProperty NotificationNameProperty =
             DependencyProperty.Register("Name", typeof(string), typeof(NotificationControl), null);
 
-        public string Name
+        public string NotificationName
         {
-            get { return GetValue(NameProperty) as string; }
-            set { SetValue(NameProperty, value); }
+            get { return GetValue(NotificationNameProperty) as string; }
+            set { SetValue(NotificationNameProperty, value); }
         }
 
         public static readonly DependencyProperty TextProperty =

@@ -6,10 +6,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Gifology"
+    xmlns:converter="using:Gifology.Converters"
     xmlns:data="using:Gifology"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <converter:IntToBoolConverter x:Key="IntToBool" />
+    </UserControl.Resources>
 
     <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
         <!--<VisualStateManager.VisualStateGroups>
@@ -81,11 +86,17 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="data:GiphyImage">
                                     <Image Name="{x:Bind Name}" 
-                                           Source="{x:Bind Url}" 
                                            Stretch="UniformToFill" 
                                            MaxWidth="400" 
                                            Margin="10"
-                                           Tapped="ImageList_Tapped"/>
+                                           Tapped="ImageList_Tapped"
+                                           DoubleTapped="Image_DoubleTapped">
+                                        <Image.Source>
+                                            <BitmapImage x:Name="GifImage" 
+                                                         UriSource="{x:Bind Url}" 
+                                                         AutoPlay="{x:Bind AutoPlayEnabled, Converter={StaticResource IntToBool}, Mode=OneWay}"/>
+                                        </Image.Source>
+                                    </Image>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
@@ -93,11 +104,17 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="data:GiphyImage">
                                     <Image Name="{x:Bind Name}" 
-                                           Source="{x:Bind Url}" 
                                            Stretch="UniformToFill" 
                                            MaxWidth="400" 
                                            Margin="10"
-                                           Tapped="ImageList_Tapped"/>
+                                           Tapped="ImageList_Tapped"
+                                           DoubleTapped="Image_DoubleTapped">
+                                        <Image.Source>
+                                            <BitmapImage x:Name="GifImage" 
+                                                         UriSource="{x:Bind Url}" 
+                                                         AutoPlay="{x:Bind AutoPlayEnabled, Converter={StaticResource IntToBool}, Mode=OneWay}"/>
+                                        </Image.Source>
+                                    </Image>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>

@@ -11,6 +11,8 @@ namespace Gifology.Database
         [Unique, NotNull]
         public int InfiniteScroll { get; set; } = 0;
         [Unique, NotNull]
+        public int AutoPlay { get; set; } = 1;
+        [Unique, NotNull]
         public string GifQuality { get; set; } = "Medium";
         [Unique, NotNull]
         public string StartPage { get; set; } = "Search";

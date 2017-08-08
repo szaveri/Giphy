@@ -44,14 +44,20 @@
                               Margin="0,0,0,15"
                               IsOn="{Binding InfiniteScrollEnabled, Converter={StaticResource IntToBool}, Mode=TwoWay}"
                               RelativePanel.Below="AppSection"/>
-                
+
+                <ToggleSwitch x:Name="AutoPlay" 
+                              Header="Double Tap to Play GIF"
+                              Margin="0,0,0,15"
+                              IsOn="{Binding AutoPlayEnabled, Converter={StaticResource IntToBool}, ConverterParameter=false, Mode=TwoWay}"
+                              RelativePanel.Below="InfiniteScroll"/>
+
                 <ComboBox x:Name="GifQuality"
                           Header="GIF Sharing Quality"
                           ItemsSource="{Binding Qualities, Mode=OneWay}"
                           SelectedValue="{Binding SelectedQuality, Mode=TwoWay}"
                           Margin="0,0,0,15"
                           Width="180"
-                          RelativePanel.Below="InfiniteScroll"/>
+                          RelativePanel.Below="AutoPlay"/>
                 
                 <ComboBox x:Name="StartingPage"
                           Header="Starting Page"

@@ -9,6 +9,7 @@ namespace Gifology
     public class SettingsItem
     {
         public static int InfiniteScroll { get; set; } = 0;
+        public static int AutoPlay { get; set; } = 1;
         public static string GifQuality { get; set; } = "Medium";
         public static string StartPage { get; set; } = "Search";
     }

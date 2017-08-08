@@ -9,6 +9,9 @@ namespace Gifology.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (parameter != null)
+                return (value is int && (int)value == 1) ? false : true;
+
             return (value is int && (int)value == 1) ? true : false;
         }
 

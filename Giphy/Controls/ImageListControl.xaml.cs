@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
@@ -19,13 +21,22 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Gifology.Controls
 {
-    public partial class ImageListControl : UserControl
+    public partial class ImageListControl : UserControl, INotifyPropertyChanged
     {
         #region Properties
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public static event RoutedEventHandler NextButton_Clicked;
         public static event RoutedEventHandler PrevButton_Clicked;
         public static Action ShowSingleImageIcons = () => { };
         public static Action ShowFullListIcons = () => { };
+
+        public int AutoPlayEnabled = SettingsItem.AutoPlay;
 
         public static readonly DependencyProperty ColumnOneListProperty =
             DependencyProperty.Register("ColumnOneList", typeof(ObservableCollection<GiphyImage>), typeof(ImageListControl), null);
@@ -53,6 +64,8 @@ namespace Gifology.Controls
             get { return GetValue(SelectedImageProperty) as Image; }
             set { SetValue(SelectedImageProperty, value); }
         }
+
+        private bool SingleTap;
         #endregion
 
         public ImageListControl()
@@ -103,23 +116,43 @@ namespace Gifology.Controls
             SystemNavigationManager.GetForCurrentView().BackRequested -= OnCloseRequest;
         }
 
-        private void ImageList_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void ImageList_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Image img = sender as Image;
-            SelectedImage = img;
+            this.SingleTap = true;
+            await Task.Delay(200);
+            if (this.SingleTap)
+            {
+                Image img = sender as Image;
+                SelectedImage = img;
 
-            var OriginalUrl = ((BitmapImage)img.Source).UriSource.OriginalString;
-            SingleImage.Source = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality), UriKind.Absolute) ? 
-                new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality))) : 
-                new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, "High")));
-            SingleImageWrapper.Visibility = Visibility.Visible;
-            ContentWrapper.Visibility = Visibility.Collapsed;
+                var OriginalUrl = ((BitmapImage)img.Source).UriSource.OriginalString;
+                SingleImage.Source = Uri.IsWellFormedUriString(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality), UriKind.Absolute) ?
+                    new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, SettingsItem.GifQuality))) :
+                    new BitmapImage(new Uri(GiphyImage.ConvertSourceType(OriginalUrl, "High")));
+                SingleImageWrapper.Visibility = Visibility.Visible;
+                ContentWrapper.Visibility = Visibility.Collapsed;
 
-            if (ShowSingleImageIcons != null)
-                ShowSingleImageIcons();
+                if (ShowSingleImageIcons != null)
+                    ShowSingleImageIcons();
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += OnCloseRequest;
-            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                SystemNavigationManager.GetForCurrentView().BackRequested += OnCloseRequest;
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            }
+        }
+
+        private void Image_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (SettingsItem.AutoPlay == 1)
+                return;
+
+            this.SingleTap = false;
+            var Img = sender as Image;
+            var Source = Img.Source as BitmapImage;
+
+            if (Source.IsPlaying)
+                Source.Stop();
+            else
+                Source.Play();
         }
 
         private void OnCloseRequest(object sender, BackRequestedEventArgs e)

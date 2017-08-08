@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="18246JesterInc.Gifology" Publisher="CN=7B5706DE-4916-44A3-8036-6E80C2691676" Version="1.5.9.0" />
+  <Identity Name="18246JesterInc.Gifology" Publisher="CN=7B5706DE-4916-44A3-8036-6E80C2691676" Version="1.5.11.0" />
   <mp:PhoneIdentity PhoneProductId="dd8be770-4085-4a2b-9f2d-4fb842c3128c" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Gifology</DisplayName>
@@ -24,6 +24,9 @@
           <uap:Rotation Preference="portraitFlipped" />
         </uap:InitialRotationPreference>
       </uap:VisualElements>
+      <Extensions>
+        <Extension Category="windows.updateTask" EntryPoint="GifologyBackgroundTasks.UpdateTask" />
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

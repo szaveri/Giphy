@@ -25,7 +25,7 @@ namespace Gifology
     {
         #region Variables
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -53,6 +53,17 @@ namespace Gifology
                 SettingsItem.InfiniteScroll = value;
                 GifologyDatabase.InsertUpdateSettings();
                 OnPropertyChanged("InfiniteScrollEnabled");
+            }
+        }
+
+        public int AutoPlayEnabled
+        {
+            get { return SettingsItem.AutoPlay; }
+            set
+            {
+                SettingsItem.AutoPlay = value == 1 ? 0 : 1;
+                GifologyDatabase.InsertUpdateSettings();
+                OnPropertyChanged("AutoPlayEnabled");
             }
         }
 
