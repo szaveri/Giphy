@@ -322,6 +322,7 @@ namespace Gifology.Database
                 {
                     var settings = t.Result;
                     SettingsItem.InfiniteScroll = settings.InfiniteScroll;
+                    SettingsItem.AutoPlay = settings.AutoPlay;
                     SettingsItem.GifQuality = settings.GifQuality;
                     SettingsItem.StartPage = settings.StartPage;
                 });
