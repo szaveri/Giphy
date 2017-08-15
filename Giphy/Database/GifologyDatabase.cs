@@ -69,7 +69,7 @@ namespace Gifology.Database
                         var setting = new Settings();
                         setting.Id = 1;
                         setting.InfiniteScroll = 0;
-                        setting.AutoPlay = 0;
+                        setting.AutoPlay = 1;
                         setting.GifQuality = "Medium";
                         setting.StartPage = "Search";
                         conn.Insert(setting);
