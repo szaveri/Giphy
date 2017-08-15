@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Gifology.Database;
 using SQLite;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Gifology
 {
@@ -160,7 +161,7 @@ namespace Gifology
             DataTransferManager.ShowShareUI();
 
             //Add to Recents database
-            var data = new Gifology.Database.Recents();
+            var data = new Recents();
             data.Giphy_Id = img.Name;
             data.Url = ((BitmapImage)img.Source).UriSource.OriginalString;
             GifologyDatabase.InsertUpdateRecent(data);
@@ -200,14 +201,14 @@ namespace Gifology
         public static void CopyImageUrl(object sender, RoutedEventArgs e, Image img)
         {
             DataPackage dataPackage = new DataPackage();
-            var url = GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
+            var url = ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
             dataPackage.RequestedOperation = DataPackageOperation.Copy;
             dataPackage.SetText(url);
             Clipboard.SetContent(dataPackage);
             Clipboard.Flush();
 
             //Add to Recents database
-            var data = new Gifology.Database.Recents();
+            var data = new Recents();
             data.Giphy_Id = img.Name;
             data.Url = url;
             GifologyDatabase.InsertUpdateRecent(data);
@@ -218,9 +219,9 @@ namespace Gifology
          */
         public static void FavoriteImage(object sender, RoutedEventArgs e, Image img)
         {
-            var data = new Gifology.Database.Favorites();
+            var data = new Favorites();
             data.Giphy_Id = img.Name;
-            data.Url = GiphyImage.ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
+            data.Url = ConvertSourceType(((BitmapImage)img.Source).UriSource.OriginalString, "original");
             GifologyDatabase.InsertUpdateFavorite(data);
         }
 
@@ -230,6 +231,55 @@ namespace Gifology
         public static void UnfavoriteImage(object sender, RoutedEventArgs e, Gifology.Database.Favorites favorite)
         {
             GifologyDatabase.DeleteFavorite(favorite);
+        }
+
+        /*
+         * Event handler to download image
+         */
+        public static async Task<bool> DownloadImage(object sender, RoutedEventArgs e, Image img)
+        {
+            try
+            {
+                StorageFolder AppFolder;
+                string fileName = img.Name + ".gif";
+
+                var CheckFolder = await KnownFolders.PicturesLibrary.TryGetItemAsync("Gifology");
+                if (CheckFolder == null)
+                    AppFolder = await KnownFolders.PicturesLibrary.CreateFolderAsync("Gifology");
+                else
+                    AppFolder = CheckFolder as StorageFolder;
+
+                try
+                {
+                    if (await AppFolder.TryGetItemAsync(fileName) == null)
+                    {
+                        var httpClient = new HttpClient();
+
+                        var OriginalUrl = ((BitmapImage)img.Source).UriSource.OriginalString;
+                        var RequestUri = Uri.IsWellFormedUriString(ConvertSourceType(OriginalUrl, SettingsItem.GifQuality), UriKind.Absolute) ?
+                            new Uri(ConvertSourceType(OriginalUrl, SettingsItem.GifQuality)) :
+                            new Uri(ConvertSourceType(OriginalUrl, "High"));
+
+                        HttpResponseMessage message = await httpClient.GetAsync(RequestUri);
+
+                        StorageFile SampleFile = await AppFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                        byte[] file = await message.Content.ReadAsByteArrayAsync();
+                        await FileIO.WriteBytesAsync(SampleFile, file);
+                        var files = await AppFolder.GetFilesAsync();
+                        return true;
+                    }
+                    else
+                        return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

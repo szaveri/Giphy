@@ -604,6 +604,26 @@ namespace Gifology
             this.ProgressRing.Visibility = Visibility.Collapsed;
         }
 
+        private async void DownloadImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var img = GetSelectedImage();
+            if (img != null)
+            {
+                var DownloadingNotification = Notifications.CreateNotification("DownloadingNotification", "Image downloading...", "Warning", false);
+                DownloadingNotification.ShowNotification();
+                if (await GiphyImage.DownloadImage(sender, e, img))
+                {
+                    DownloadingNotification.DestroyNotification();
+                    Notifications.CreateNotification("DownloadCompleteNotification", "Image downloaded", "Success", false).ShowHideNotification();
+                }
+                else
+                {
+                    DownloadingNotification.DestroyNotification();
+                    Notifications.CreateNotification("DownloadFailNotification", "Image failed to downloaded", "Error", false).ShowHideNotification();
+                }
+            }
+        }
+
         private async void CategoryAppButton_Click(object sender, RoutedEventArgs e)
         {
             var img = GetSelectedImage();

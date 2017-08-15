@@ -624,6 +624,13 @@
                                   Click="ShareAppButton_Click">
                     <FontIcon Glyph="&#xE72D;" />
                 </AppBarButton>
+
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton Style="{StaticResource SecondAppBarButtonStyle}"
+                                  Name="DownloadImageButton"
+                                  Label="Download Image"
+                                  Click="DownloadImageButton_Click"/>
+                </CommandBar.SecondaryCommands>
             </CommandBar>
         </Grid>
     </Grid>
